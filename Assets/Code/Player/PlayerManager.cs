@@ -78,7 +78,11 @@ namespace Project.Player {
             super = info["super"].RemoveQuotes();
         }
 
+        public string getTeam() { return this.team; }
+        public float getHealth() { return this.health; }
         public float getFullHealth() { return this.fullHealth; }
+        public float getMp() { return this.mp; }
+        public float getFullMp() { return this.fullMp; }
         public void setHealth(float health) { this.health = health; }
 
         public float GetLastRotation() {

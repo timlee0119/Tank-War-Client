@@ -152,13 +152,16 @@ namespace Project.Managers {
 
             foreach (KeyValuePair<string, UserInGameRoom> item in NetworkClient.usersInGameRoom) {
                 UserInGameRoom player = item.Value;
+
                 if (player.team == "blue") {
                     blueTeamTextMap[blueNum].text = player.username;
                     GameObject go = Instantiate(tankIDtoPrefab[player.tank], blueTeamPositionMap[blueNum]);
                     prefabsToDelete.Add(go);
-                    // change team color of bigtank
-                    ColorUtility.TryParseHtmlString("#61D3FF", out color);
-                    teamColor.color = color;
+                    if (player.id == NetworkClient.ClientID) {
+                        // change team color of bigtank
+                        ColorUtility.TryParseHtmlString("#61D3FF", out color);
+                        teamColor.color = color;
+                    }
 
                     if (player.ready) {
                         go = Instantiate(readyPrefab, blueTeamPositionMap[blueNum]);
@@ -171,9 +174,11 @@ namespace Project.Managers {
                     orangeTeamTextMap[orangeNum].text = player.username;
                     GameObject go = Instantiate(tankIDtoPrefab[player.tank], orangeTeamPositionMap[orangeNum]);
                     prefabsToDelete.Add(go);
-                    // change team color of bigtank
-                    ColorUtility.TryParseHtmlString("#FDB174", out color);
-                    teamColor.color = color;
+                    if (player.id == NetworkClient.ClientID) {
+                        // change team color of bigtank
+                        ColorUtility.TryParseHtmlString("#FDB174", out color);
+                        teamColor.color = color;
+                    }
 
                     if (player.ready) {
                         go = Instantiate(readyPrefab, orangeTeamPositionMap[orangeNum]);
@@ -185,11 +190,14 @@ namespace Project.Managers {
                 else {
                     Debug.Log("Unknown team"); return;
                 }
-                // Instantiate big tank
-                GameObject bigtank = Instantiate(tankIDtoPrefab[player.tank], bigTankContainer);
-                bigtank.transform.localScale = new Vector3(120, 120, 1);
-                bigtank.transform.position -= new Vector3(0, 5*canvasScale, 0);
-                prefabsToDelete.Add(bigtank);
+                
+                if (player.id == NetworkClient.ClientID) {
+                    // Instantiate big tank
+                    GameObject bigtank = Instantiate(tankIDtoPrefab[player.tank], bigTankContainer);
+                    bigtank.transform.localScale = new Vector3(120, 120, 1);
+                    bigtank.transform.position -= new Vector3(0, 5 * canvasScale, 0);
+                    prefabsToDelete.Add(bigtank);
+                }
             }
         }
 

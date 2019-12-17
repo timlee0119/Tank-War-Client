@@ -315,6 +315,11 @@ namespace Project.Networking {
                     PlayerManager pm = go.GetComponent<PlayerManager>();
                     pm.setInfo(playersInfo[i]);
                 }
+
+                // initialize my status bar, rotate camera if orange team
+                PlayerManager p = serverObjects[ClientID].GetComponent<PlayerManager>();
+                InGameUIManager.Instance.updateHealthBar(p.getFullHealth(), p.getHealth());
+                InGameUIManager.Instance.updateMagicBar(p.getFullMp(), p.getMp());
             });
 
             On("setPlayerHealth", (E) => {
@@ -322,7 +327,7 @@ namespace Project.Networking {
                 string id = E.data["id"].RemoveQuotes();
                 NetworkIdentity ni = serverObjects[id];
                 float health = E.data["health"].f;
-
+                Debug.Log(health);
                 // update my UI Canvas health bar
                 if (id == ClientID) {
                     PlayerManager pm = ni.GetComponent<PlayerManager>();
