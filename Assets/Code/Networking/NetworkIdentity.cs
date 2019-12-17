@@ -1,0 +1,47 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using Project.Utility.Attributes;
+using UnityEngine;
+using SocketIO;
+
+namespace Project.Networking {
+    [RequireComponent(typeof(NetworkPrefabs))]
+    public class NetworkIdentity : MonoBehaviour {
+
+        [Header("Helpful Values")]
+        [SerializeField]
+        [GreyOut]
+        private string id;
+        [SerializeField]
+        [GreyOut]
+        private bool isControlling;
+
+        private SocketIOComponent socket;
+
+        public void Awake() {
+            isControlling = false;
+        }
+
+        public void SetControllerID(string ID) {
+            id = ID;
+            // Check incoming id versuses the one we haved saved from the server
+            isControlling = (NetworkClient.ClientID == ID) ? true : false;
+        }
+
+        public void SetSocketReference(SocketIOComponent Socket) {
+            socket = Socket;
+        }
+
+        public string GetID() {
+            return id;
+        }
+
+        public bool IsControlling() {
+            return isControlling;
+        }
+
+        public SocketIOComponent GetSocket() {
+            return socket;
+        }
+    }
+}
