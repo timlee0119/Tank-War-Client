@@ -44,6 +44,8 @@ namespace Project.Networking {
 
         private List<Transform> positionIDToContainer;
 
+        private Dictionary<string, int> playerIDtoStatusBarIndex;
+
         // Use this for initialization
         public override void Start() {
             base.Start();
@@ -74,6 +76,7 @@ namespace Project.Networking {
             positionIDToContainer.Add(orange1Container);
             positionIDToContainer.Add(orange2Container);
             positionIDToContainer.Add(orange3Container);
+            playerIDtoStatusBarIndex = new Dictionary<string, int>();
         }
 
         private void setupEvents() {
@@ -103,6 +106,12 @@ namespace Project.Networking {
 
                 NetworkIdentity ni = serverObjects[id];
                 ni.transform.position = new Vector3(x, y, 0);
+
+                // update status bar position
+                if (playerIDtoStatusBarIndex.ContainsKey(id)) {
+                    int statusBarPosition = playerIDtoStatusBarIndex[id];
+                    InGameUIManager.Instance.updateStatusBar(statusBarPosition, x, y);
+                }
             });
 
             On("updateRotation", (E) => {
@@ -305,6 +314,7 @@ namespace Project.Networking {
                         );
                     }
 
+                    // Map ID to networkidentity
                     go.name = playersInfo[i]["username"].RemoveQuotes();
                     NetworkIdentity ni = go.GetComponent<NetworkIdentity>();
                     ni.SetControllerID(id);
@@ -314,6 +324,13 @@ namespace Project.Networking {
                     // initialize all players' info
                     PlayerManager pm = go.GetComponent<PlayerManager>();
                     pm.setInfo(playersInfo[i]);
+
+                    // map all players' id to status bar index
+                    playerIDtoStatusBarIndex.Add(id, i);
+                    // update other players' status bar username
+                    if (id != ClientID) {
+                        InGameUIManager.Instance.updateStatusBarUsername(i, go.name);
+                    }
                 }
 
                 // initialize my status bar, rotate camera if orange team
@@ -349,6 +366,11 @@ namespace Project.Networking {
                 NetworkIdentity ni = serverObjects[id];
                 ni.transform.position = new Vector3(x, y, 0);
                 ni.gameObject.SetActive(true);
+            });
+
+            On("updateBulletNum", (E) => {
+                float bulletNum = E.data["bulletNum"].f;
+                InGameUIManager.Instance.updateBulletNum(bulletNum);
             });
         }
 
