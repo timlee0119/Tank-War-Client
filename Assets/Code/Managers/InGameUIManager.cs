@@ -1,4 +1,6 @@
-﻿using Project.Utility;
+﻿using Project.Networking;
+using Project.Player;
+using Project.Utility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,6 +65,11 @@ namespace Project.Managers {
         [SerializeField]
         private Text Username6;
 
+        private float blueStatusXOffset = 0.7f;
+        private float blueStatusYOffset = -0.9f;
+        private float orangeStatusXOffset = -0.7f;
+        private float orangeStatusYOffset = 0.9f;
+
         private List<Image> bulletList;
         private List<GameObject> statusBarList;
         private List<Image> healthBarList;
@@ -99,13 +106,26 @@ namespace Project.Managers {
             usernameList.Add(Username6);
         }
 
+        public void Update() {
+            // update other players' status bar
+            if (NetworkClient.playerIDtoStatusBarIndex != null) {
+                foreach (KeyValuePair<string, int> item in NetworkClient.playerIDtoStatusBarIndex) {
+                    int index = item.Value;
+                    if (item.Key != NetworkClient.ClientID) {
+                        NetworkIdentity ni = NetworkClient.serverObjects[item.Key];
+                        PlayerManager pm = ni.GetComponent<PlayerManager>();
+                        updateStatusBar(index, pm.getTeam(), ni.transform.position.x, ni.transform.position.y);
+                    }
+                }
+            }
+        }
+
         public void activateGameUICanvas() {
             UICanvas.enabled = true;
         }
 
         public void updateHealthBar(float fullHealth, float health) {
             float scale = health / fullHealth;
-            Debug.Log(scale);
             Health.transform.localScale = new Vector3(
                 scale,
                 Health.transform.localScale.y,
@@ -116,7 +136,6 @@ namespace Project.Managers {
 
         public void updateMagicBar(float fullMp, float mp) {
             float scale = mp / fullMp;
-            Debug.Log(scale);
             Magic.transform.localScale = new Vector3(
                 scale,
                 Magic.transform.localScale.y,
@@ -137,16 +156,32 @@ namespace Project.Managers {
             bulletList[i].transform.localScale = new Vector3(remain, 1, 1);
         }
 
-        public void updateStatusBar(int index, float x, float y) {
-            statusBarList[index].transform.position = new Vector3(x, y, 0);
+        public void updateStatusBar(int index, string team, float x, float y) {
+            if (team == "blue") {
+                statusBarList[index].transform.position = new Vector3(x + blueStatusXOffset, y + blueStatusYOffset, 0);
+            }
+            else {
+                statusBarList[index].transform.position = new Vector3(x + orangeStatusXOffset, y + orangeStatusYOffset, 0);
+            }
+            
         }
 
         public void updateStatusBarUsername(int index, string username) {
             usernameList[index].text = username;
         }
 
-        public void updateStatusBarHealth(int index, float health) {
-            /*healthBarList[index].*/
+        public void updateStatusBarHealth(int index, float fullHealth, float health) {
+            float scale = health / fullHealth;
+            healthBarList[index].transform.localScale = new Vector3(
+                scale,
+                healthBarList[index].transform.localScale.y,
+                1
+            );
+        }
+
+        public void toggleStatusBar(int index) {
+            bool isActive = statusBarList[index].activeSelf;
+            statusBarList[index].SetActive(!isActive);
         }
     }
 }

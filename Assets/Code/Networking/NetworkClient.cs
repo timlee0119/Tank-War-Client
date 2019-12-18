@@ -36,7 +36,7 @@ namespace Project.Networking {
         public static int RoomID { get; private set; }
         public static Dictionary<string, UserInGameRoom> usersInGameRoom { get; private set; }
 
-        private Dictionary<string, NetworkIdentity> serverObjects;
+        public static Dictionary<string, NetworkIdentity> serverObjects;
 
         public static Dictionary<int, GameRoomInfo> gameRoomsInfo { get; private set; }
 
@@ -44,7 +44,7 @@ namespace Project.Networking {
 
         private List<Transform> positionIDToContainer;
 
-        private Dictionary<string, int> playerIDtoStatusBarIndex;
+        public static Dictionary<string, int> playerIDtoStatusBarIndex;
 
         // Use this for initialization
         public override void Start() {
@@ -92,11 +92,7 @@ namespace Project.Networking {
             });
 
             On("disconnected", (E) => {
-                string id = E.data["id"].RemoveQuotes();
-
-                GameObject go = serverObjects[id].gameObject;
-                Destroy(go);
-                serverObjects.Remove(id);
+                
             });
 
             On("updatePosition", (E) => {
@@ -106,12 +102,6 @@ namespace Project.Networking {
 
                 NetworkIdentity ni = serverObjects[id];
                 ni.transform.position = new Vector3(x, y, 0);
-
-                // update status bar position
-                if (playerIDtoStatusBarIndex.ContainsKey(id)) {
-                    int statusBarPosition = playerIDtoStatusBarIndex[id];
-                    InGameUIManager.Instance.updateStatusBar(statusBarPosition, x, y);
-                }
             });
 
             On("updateRotation", (E) => {
@@ -168,14 +158,6 @@ namespace Project.Networking {
                 serverObjects.Remove(id);
                 DestroyImmediate(ni.gameObject);
             });
-
-
-            /*On("loadGame", callback: (E) => {
-                Debug.Log(message: "Switching to game");
-                SceneManagementManager.Instance.LoadLevel(SceneList.LEVEL, (levelName) => {
-                    SceneManagementManager.Instance.UnLoadLevel(SceneList.LOGIN);
-                });
-            });*/
 
             On("loadGameRoom", callback: (E) => {
                 Debug.Log(message: "Switching to gameRoom");
@@ -268,6 +250,17 @@ namespace Project.Networking {
 
             On("leaveGameRoom", (E) => {
                 string id = E.data["id"].RemoveQuotes();
+                // maintain usersInGameRoom, serverObjects, playersIDtoStatusBarIndex
+                if (E.data["playing"].b) {
+                    // hide statusbar
+                    InGameUIManager.Instance.toggleStatusBar(playerIDtoStatusBarIndex[id]);
+
+                    GameObject go = serverObjects[id].gameObject;
+                    Destroy(go);
+                    serverObjects.Remove(id);
+                    playerIDtoStatusBarIndex.Remove(id);
+                }
+
                 usersInGameRoom.Remove(id);
             });
 
@@ -340,16 +333,21 @@ namespace Project.Networking {
             });
 
             On("setPlayerHealth", (E) => {
-                // update all players' health bar on head
                 string id = E.data["id"].RemoveQuotes();
                 NetworkIdentity ni = serverObjects[id];
                 float health = E.data["health"].f;
                 Debug.Log(health);
+
+                PlayerManager pm = ni.GetComponent<PlayerManager>();
                 // update my UI Canvas health bar
                 if (id == ClientID) {
-                    PlayerManager pm = ni.GetComponent<PlayerManager>();
                     pm.setHealth(health);
                     InGameUIManager.Instance.updateHealthBar(pm.getFullHealth(), health);
+                }
+                // update all players' health bar on head
+                else {
+                    InGameUIManager.Instance.updateStatusBarHealth(playerIDtoStatusBarIndex[id]
+                                                                  , pm.getFullHealth(), health);
                 }
             });
 
@@ -357,15 +355,19 @@ namespace Project.Networking {
                 string id = E.data["id"].RemoveQuotes();
                 NetworkIdentity ni = serverObjects[id];
                 ni.gameObject.SetActive(false);
+
+                // hide status bar
+                InGameUIManager.Instance.toggleStatusBar(playerIDtoStatusBarIndex[id]);
             });
 
             On("playerRespawn", (E) => {
                 string id = E.data["id"].RemoveQuotes();
-                float x = E.data["position"]["x"].f;
-                float y = E.data["position"]["y"].f;
                 NetworkIdentity ni = serverObjects[id];
-                ni.transform.position = new Vector3(x, y, 0);
+                ni.transform.position = positionIDToContainer[E.data["startPosition"].i()].position;
                 ni.gameObject.SetActive(true);
+
+                // show status bar
+                InGameUIManager.Instance.toggleStatusBar(playerIDtoStatusBarIndex[id]);
             });
 
             On("updateBulletNum", (E) => {
