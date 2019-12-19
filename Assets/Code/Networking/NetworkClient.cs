@@ -28,6 +28,10 @@ namespace Project.Networking {
         [SerializeField]
         private Transform orange3Container;
         [SerializeField]
+        private Transform blueSafeBoxContainer;
+        [SerializeField]
+        private Transform orangeSafeBoxContainer;
+        [SerializeField]
         private ServerObjects serverSpawnables;
         [SerializeField]
         private NetworkPrefabs networkPrefabs;
@@ -112,51 +116,6 @@ namespace Project.Networking {
                 NetworkIdentity ni = serverObjects[id];
                 ni.transform.localEulerAngles = new Vector3(0, 0, tankRotation);
                 ni.GetComponent<PlayerManager>().SetRotation(barrelRotation);
-            });
-
-            On("serverSpawn", (E) => {
-                string name = E.data["name"].str;
-                string id = E.data["id"].RemoveQuotes();
-                float x = E.data["position"]["x"].f;
-                float y = E.data["position"]["y"].f;
-                Debug.LogFormat("Server wants us to spawn a '{0}'", name);
-
-                if (!serverObjects.ContainsKey(id)) {
-                    ServerObjectData sod = serverSpawnables.GetObjectByName(name);
-                    var spawnedObject = Instantiate(sod.Prefab, blue1Container);
-                    spawnedObject.transform.position = new Vector3(x, y, 0);
-                    var ni = spawnedObject.GetComponent<NetworkIdentity>();
-                    ni.SetControllerID(id);
-                    ni.SetSocketReference(this);
-
-                    // If bullet apply direction as well
-                    if (name == "Bullet") {
-                        float directionX = E.data["direction"]["x"].f;
-                        float directionY = E.data["direction"]["y"].f;
-                        string activator = E.data["activator"].RemoveQuotes();
-                        float speed = E.data["speed"].f;
-
-                        float rot = Mathf.Atan2(directionY, directionX) * Mathf.Rad2Deg;
-                        Vector3 currentRotation = new Vector3(0, 0, rot - 90);
-                        spawnedObject.transform.rotation = Quaternion.Euler(currentRotation);
-
-                        WhoActivatedMe whoActivatedMe = spawnedObject.GetComponent<WhoActivatedMe>();
-                        whoActivatedMe.SetActivator(activator);
-
-                        Projectile projectile = spawnedObject.GetComponent<Projectile>();
-                        projectile.Direction = new Vector2(directionX, directionY);
-                        projectile.Speed = speed;
-                    }
-
-                    serverObjects.Add(id, ni);
-                }
-            });
-
-            On("serverUnspawn", (E) => {
-                string id = E.data["id"].RemoveQuotes();
-                NetworkIdentity ni = serverObjects[id];
-                serverObjects.Remove(id);
-                DestroyImmediate(ni.gameObject);
             });
 
             On("loadGameRoom", callback: (E) => {
@@ -272,6 +231,14 @@ namespace Project.Networking {
                         SceneManagementManager.Instance.UnLoadLevel(SceneList.GAMEROOM);
                         InGameUIManager.Instance.activateGameUICanvas();
                     });
+
+                    // tell server to spawn safe boxes
+                    JSONObject j = new JSONObject();
+                    j.AddField("bluex", blueSafeBoxContainer.transform.position.x);
+                    j.AddField("bluey", blueSafeBoxContainer.transform.position.y);
+                    j.AddField("orangex", orangeSafeBoxContainer.transform.position.x);
+                    j.AddField("orangey", orangeSafeBoxContainer.transform.position.y);
+                    Emit("initSafeBoxes", j);
                 }
                 else if (mode == "Showdown") {
                     Debug.Log("Start Showdown");
@@ -322,6 +289,7 @@ namespace Project.Networking {
                     playerIDtoStatusBarIndex.Add(id, i);
                     // update other players' status bar username
                     if (id != ClientID) {
+                        InGameUIManager.Instance.toggleStatusBar(i);
                         InGameUIManager.Instance.updateStatusBarUsername(i, go.name);
                     }
                 }
@@ -330,6 +298,72 @@ namespace Project.Networking {
                 PlayerManager p = serverObjects[ClientID].GetComponent<PlayerManager>();
                 InGameUIManager.Instance.updateHealthBar(p.getFullHealth(), p.getHealth());
                 InGameUIManager.Instance.updateMagicBar(p.getFullMp(), p.getMp());
+            });
+
+            On("spawnGameObject", (E) => {
+                string name = E.data["name"].str;
+                string id = E.data["id"].RemoveQuotes();
+                float x = E.data["position"]["x"].f;
+                float y = E.data["position"]["y"].f;
+                Debug.LogFormat("Server wants us to spawn a '{0}'", name);
+
+                if (!serverObjects.ContainsKey(id)) {
+                    NetworkIdentity ni;
+                    if (name == "Bullet") {
+                        ServerObjectData sod = serverSpawnables.GetObjectByName(name);
+                        // instantiate bullet position with random container because position would be updated immediately
+                        var spawnedObject = Instantiate(sod.Prefab, blue1Container);
+                        spawnedObject.transform.position = new Vector3(x, y, 0);
+                        ni = spawnedObject.GetComponent<NetworkIdentity>();
+                        ni.SetControllerID(id);
+                        ni.SetSocketReference(this);
+                        serverObjects.Add(id, ni);
+
+                        float directionX = E.data["direction"]["x"].f;
+                        float directionY = E.data["direction"]["y"].f;
+                        string activator = E.data["activator"].RemoveQuotes();
+                        float speed = E.data["speed"].f;
+
+                        float rot = Mathf.Atan2(directionY, directionX) * Mathf.Rad2Deg;
+                        Vector3 currentRotation = new Vector3(0, 0, rot - 90);
+                        spawnedObject.transform.rotation = Quaternion.Euler(currentRotation);
+
+                        WhoActivatedMe whoActivatedMe = spawnedObject.GetComponent<WhoActivatedMe>();
+                        whoActivatedMe.SetActivator(activator);
+
+                        Projectile projectile = spawnedObject.GetComponent<Projectile>();
+                        projectile.Direction = new Vector2(directionX, directionY);
+                        projectile.Speed = speed;
+                    }
+                    else if (name == "SafeBox") {
+                        GameObject go;
+                        string team = E.data["team"].str;
+                        if (team == "blue") {
+                            go = Instantiate(networkPrefabs.blueSafeBoxPrefab, blueSafeBoxContainer);
+                        }
+                        else {
+                            go = Instantiate(networkPrefabs.orangeSafeBoxPrefab, orangeSafeBoxContainer);
+                        }
+                        Debug.Log("fuck");
+                        ni = go.GetComponent<NetworkIdentity>();
+                        /*ni.SetControllerID(id);
+                        ni.SetSocketReference(this);*/
+                        serverObjects.Add(id, ni);
+                        Debug.Log("dd");
+                        InGameUIManager.Instance.toggleSafeBoxHealthBar(team);
+                        InGameUIManager.Instance.setSafeBoxHealthBarPosition(team, x, y);
+                    }
+                    else {
+                        Debug.LogError("undefined object name");
+                    }
+                }
+            });
+
+            On("unspawnGameObject", (E) => {
+                string id = E.data["id"].RemoveQuotes();
+                NetworkIdentity ni = serverObjects[id];
+                serverObjects.Remove(id);
+                DestroyImmediate(ni.gameObject);
             });
 
             On("setPlayerHealth", (E) => {
@@ -357,7 +391,9 @@ namespace Project.Networking {
                 ni.gameObject.SetActive(false);
 
                 // hide status bar
-                InGameUIManager.Instance.toggleStatusBar(playerIDtoStatusBarIndex[id]);
+                if (id != ClientID) {
+                    InGameUIManager.Instance.toggleStatusBar(playerIDtoStatusBarIndex[id]);
+                }
             });
 
             On("playerRespawn", (E) => {
@@ -365,9 +401,20 @@ namespace Project.Networking {
                 NetworkIdentity ni = serverObjects[id];
                 ni.transform.position = positionIDToContainer[E.data["startPosition"].i()].position;
                 ni.gameObject.SetActive(true);
+                PlayerManager pm = ni.GetComponent<PlayerManager>();
 
-                // show status bar
-                InGameUIManager.Instance.toggleStatusBar(playerIDtoStatusBarIndex[id]);
+                // update my health bar and others' status bar
+                if (id == ClientID) {
+                    pm.setHealth(pm.getFullHealth());
+                    InGameUIManager.Instance.updateHealthBar(pm.getFullHealth(), pm.getHealth());
+                }
+                else {
+                    pm.setHealth(pm.getFullHealth());
+                    InGameUIManager.Instance.updateStatusBarHealth(playerIDtoStatusBarIndex[id]
+                                                                   , pm.getFullHealth(), pm.getHealth());
+                    // show status bar
+                    InGameUIManager.Instance.toggleStatusBar(playerIDtoStatusBarIndex[id]);
+                }
             });
 
             On("updateBulletNum", (E) => {
@@ -375,11 +422,6 @@ namespace Project.Networking {
                 InGameUIManager.Instance.updateBulletNum(bulletNum);
             });
         }
-
-        public void AttemptToJoinLobby() {
-            Emit("joinGame");
-        }
-
     }
 
     [Serializable]

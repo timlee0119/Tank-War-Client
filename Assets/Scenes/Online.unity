@@ -120,6 +120,36 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &92342079
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 92342080}
+  m_Layer: 0
+  m_Name: Position - blueSafeBox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &92342080
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 92342079}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5, y: -1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &150981648
 GameObject:
   m_ObjectHideFlags: 0
@@ -312,6 +342,8 @@ MonoBehaviour:
   orange1Container: {fileID: 1302540416}
   orange2Container: {fileID: 1682186483}
   orange3Container: {fileID: 1141340995}
+  blueSafeBoxContainer: {fileID: 92342080}
+  orangeSafeBoxContainer: {fileID: 1573639620}
   serverSpawnables: {fileID: 11400000, guid: 165dd897b9efc4c14b6ea1108653ed2d, type: 2}
   networkPrefabs: {fileID: 1386882647}
 --- !u!4 &1386882646
@@ -352,6 +384,40 @@ MonoBehaviour:
     type: 3}
   shadowTankPrefab: {fileID: 3337672926959625963, guid: 5673294228675ed478acc670915fec73,
     type: 3}
+  blueSafeBoxPrefab: {fileID: 2794799198475511345, guid: f4d2061395ae3a549bc0f779e5be068a,
+    type: 3}
+  orangeSafeBoxPrefab: {fileID: 8787179297190763880, guid: 85cfa4792896bec4e9467dd6c00123b6,
+    type: 3}
+--- !u!1 &1573639619
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1573639620}
+  m_Layer: 0
+  m_Name: Position - orangeSafeBox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1573639620
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573639619}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5, y: 13, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1655968326
 GameObject:
   m_ObjectHideFlags: 0

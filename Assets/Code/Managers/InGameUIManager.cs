@@ -64,11 +64,30 @@ namespace Project.Managers {
         private Image HealthBar6;
         [SerializeField]
         private Text Username6;
+        [SerializeField]
+        private GameObject BlueSafeBoxHealthPosition;
+        [SerializeField]
+        private Image BlueSafeBoxHealth;
+        [SerializeField]
+        private GameObject OrangeSafeBoxHealthPosition;
+        [SerializeField]
+        private Image OrangeSafeBoxHealth;
 
-        private float blueStatusXOffset = 0.7f;
-        private float blueStatusYOffset = -0.9f;
-        private float orangeStatusXOffset = -0.7f;
-        private float orangeStatusYOffset = 0.9f;
+        private float blueEnemyStatusXOffset = 0.7f;
+        private float blueEnemyStatusYOffset = -0.9f;
+        private float orangeEnemyStatusXOffset = -0.7f;
+        private float orangeEnemyStatusYOffset = 0.9f;
+        private float blueTeammateStatusXOffset = -0.63f;
+        private float blueTeammateStatusYOffset = 0.9f;
+        private float orangeTeammateStatusXOffset = 0.63f;
+        private float orangeTeammateStatusYOffset = -0.9f;
+        private float blueSafeBoxHealthXOffset = 1.65f;
+        private float blueSafeBoxHealthYOffset = 1.1f;
+        private float orangeSafeBoxHealthXOffset = 1.65f;
+        private float orangeSafeBoxHealthYOffset = -1.5f;
+
+        private GameObject blueSafeBoxPosition;
+        private GameObject orangeSafeBoxPosition;
 
         private List<Image> bulletList;
         private List<GameObject> statusBarList;
@@ -90,6 +109,9 @@ namespace Project.Managers {
             statusBarList.Add(StatusBar4);
             statusBarList.Add(StatusBar5);
             statusBarList.Add(StatusBar6);
+            foreach (GameObject go in statusBarList) {
+                go.SetActive(false);
+            }
             healthBarList = new List<Image>();
             healthBarList.Add(HealthBar1);
             healthBarList.Add(HealthBar2);
@@ -104,19 +126,53 @@ namespace Project.Managers {
             usernameList.Add(Username4);
             usernameList.Add(Username5);
             usernameList.Add(Username6);
+            BlueSafeBoxHealthPosition.SetActive(false);
+            OrangeSafeBoxHealthPosition.SetActive(false);
+
+            blueSafeBoxPosition = new GameObject();
+            orangeSafeBoxPosition = new GameObject();
         }
 
         public void Update() {
             // update other players' status bar
-            if (NetworkClient.playerIDtoStatusBarIndex != null) {
+            string myteam = "";
+            if (NetworkClient.playerIDtoStatusBarIndex != null && NetworkClient.ClientID != null
+                && NetworkClient.serverObjects != null && NetworkClient.serverObjects.ContainsKey(NetworkClient.ClientID)) {
+                myteam = NetworkClient.serverObjects[NetworkClient.ClientID].GetComponent<PlayerManager>().getTeam();
                 foreach (KeyValuePair<string, int> item in NetworkClient.playerIDtoStatusBarIndex) {
                     int index = item.Value;
                     if (item.Key != NetworkClient.ClientID) {
                         NetworkIdentity ni = NetworkClient.serverObjects[item.Key];
                         PlayerManager pm = ni.GetComponent<PlayerManager>();
-                        updateStatusBar(index, pm.getTeam(), ni.transform.position.x, ni.transform.position.y);
+                        updateStatusBar(index, pm.getTeam(), myteam, ni.transform.position.x, ni.transform.position.y);
                     }
                 }
+            }
+
+            // update safe boxes' position
+            if (myteam == "blue") {
+                BlueSafeBoxHealthPosition.transform.position = new Vector3(
+                    blueSafeBoxPosition.transform.position.x - blueSafeBoxHealthXOffset,
+                    blueSafeBoxPosition.transform.position.y - orangeSafeBoxHealthYOffset,
+                    0
+                );
+                OrangeSafeBoxHealthPosition.transform.position = new Vector3(
+                    orangeSafeBoxPosition.transform.position.x - orangeSafeBoxHealthXOffset,
+                    orangeSafeBoxPosition.transform.position.y - blueSafeBoxHealthYOffset,
+                    0
+                );
+            }
+            else if (myteam == "orange") {
+                BlueSafeBoxHealthPosition.transform.position = new Vector3(
+                    blueSafeBoxPosition.transform.position.x + blueSafeBoxHealthXOffset,
+                    blueSafeBoxPosition.transform.position.y + blueSafeBoxHealthYOffset,
+                    0
+                );
+                OrangeSafeBoxHealthPosition.transform.position = new Vector3(
+                    orangeSafeBoxPosition.transform.position.x + orangeSafeBoxHealthXOffset,
+                    orangeSafeBoxPosition.transform.position.y + orangeSafeBoxHealthYOffset,
+                    0
+                );
             }
         }
 
@@ -156,14 +212,24 @@ namespace Project.Managers {
             bulletList[i].transform.localScale = new Vector3(remain, 1, 1);
         }
 
-        public void updateStatusBar(int index, string team, float x, float y) {
+        public void updateStatusBar(int index, string team, string myteam, float x, float y) {
             if (team == "blue") {
-                statusBarList[index].transform.position = new Vector3(x + blueStatusXOffset, y + blueStatusYOffset, 0);
+                if (myteam == "orange") {
+                    statusBarList[index].transform.position = new Vector3(x + blueEnemyStatusXOffset, y + blueEnemyStatusYOffset, 0);
+                }
+                else {
+                    statusBarList[index].transform.position = new Vector3(x + blueTeammateStatusXOffset, y + blueTeammateStatusYOffset, 0);
+                }
+                
             }
             else {
-                statusBarList[index].transform.position = new Vector3(x + orangeStatusXOffset, y + orangeStatusYOffset, 0);
+                if (myteam == "blue") {
+                    statusBarList[index].transform.position = new Vector3(x + orangeEnemyStatusXOffset, y + orangeEnemyStatusYOffset, 0);
+                }
+                else {
+                    statusBarList[index].transform.position = new Vector3(x + orangeTeammateStatusXOffset, y + orangeTeammateStatusYOffset, 0);
+                }
             }
-            
         }
 
         public void updateStatusBarUsername(int index, string username) {
@@ -182,6 +248,30 @@ namespace Project.Managers {
         public void toggleStatusBar(int index) {
             bool isActive = statusBarList[index].activeSelf;
             statusBarList[index].SetActive(!isActive);
+        }
+
+        public void toggleSafeBoxHealthBar(string team) {
+            if (team == "blue") {
+                bool isActive = BlueSafeBoxHealthPosition.activeSelf;
+                Debug.Log(isActive);
+                BlueSafeBoxHealthPosition.SetActive(!isActive);
+            }
+            else {
+                bool isActive = OrangeSafeBoxHealthPosition.activeSelf;
+                OrangeSafeBoxHealthPosition.SetActive(!isActive);
+            }
+        }
+
+        public void setSafeBoxHealthBarPosition(string team, float x, float y) {
+            if (team == "blue") {
+                blueSafeBoxPosition.transform.position = new Vector3(x, y, 0);
+            }
+            else if (team == "orange") {
+                orangeSafeBoxPosition.transform.position = new Vector3(x, y, 0);
+            }
+            else {
+                Debug.LogError("undefined team");
+            }
         }
     }
 }

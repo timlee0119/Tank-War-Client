@@ -10,5 +10,7 @@ namespace Project.Networking {
         public GameObject oceanTankPrefab;
         public GameObject sandTankPrefab;
         public GameObject shadowTankPrefab;
+        public GameObject blueSafeBoxPrefab;
+        public GameObject orangeSafeBoxPrefab;
     }
 }
