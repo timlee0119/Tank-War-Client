@@ -302,13 +302,13 @@ namespace Project.Networking {
                 InGameUIManager.Instance.updateHealthBar(p.getFullHealth(), p.getHealth());
                 InGameUIManager.Instance.updateMagicBar(p.getFullMp(), p.getMp());
 
-                // remove all teamamates' rigidbody
+                // remove all teamamates' collider
                 for (int i = 0; i < playerNum; ++i) {
                     string id = playersInfo[i]["id"].RemoveQuotes();
                     if (playersInfo[i]["team"].str == serverObjects[ClientID].GetNiTeam()
                         && id != ClientID) {
                         Destroy(serverObjects[id].GetComponent<Rigidbody2D>());
-                        // TODO
+                        Destroy(serverObjects[id].GetComponent<CircleCollider2D>());
                     }
                 }
             });
@@ -331,14 +331,18 @@ namespace Project.Networking {
                         ni.SetControllerID(id);
                         ni.SetSocketReference(this);
                         ni.SetNiType(name);
+                        string activator = E.data["activator"].str;
+                        ni.SetNiTeam(serverObjects[activator].GetComponent<PlayerManager>().getTeam());
+                        // if this bullet is spanwed by teammates, remove it's collider
+                        if (ni.GetNiTeam() == serverObjects[ClientID].GetNiTeam() && ni.GetID() != ClientID) {
+                            Destroy(ni.GetComponent<Rigidbody2D>());
+                            Destroy(ni.GetComponent<CircleCollider2D>());
+                        }
                         serverObjects.Add(id, ni);
 
                         float directionX = E.data["direction"]["x"].f;
                         float directionY = E.data["direction"]["y"].f;
-                        string activator = E.data["activator"].str;
                         float speed = E.data["speed"].f;
-                        ni.SetNiTeam(serverObjects[activator].GetComponent<PlayerManager>().getTeam());
-
                         float rot = Mathf.Atan2(directionY, directionX) * Mathf.Rad2Deg;
                         Vector3 currentRotation = new Vector3(0, 0, rot - 90);
                         spawnedObject.transform.rotation = Quaternion.Euler(currentRotation);
@@ -365,6 +369,9 @@ namespace Project.Networking {
                         ni.SetSocketReference(this);
                         ni.SetNiType(name);
                         ni.SetNiTeam(team);
+                        if (team == serverObjects[ClientID].GetNiTeam()) {
+                            Destroy(ni.GetComponent<BoxCollider2D>());
+                        }
                         serverObjects.Add(id, ni);
                         InGameUIManager.Instance.toggleSafeBoxHealthBar(team);
                         InGameUIManager.Instance.setSafeBoxHealthBarPosition(team, x, y);
