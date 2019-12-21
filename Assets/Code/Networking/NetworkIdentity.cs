@@ -15,6 +15,11 @@ namespace Project.Networking {
         [SerializeField]
         [GreyOut]
         private bool isControlling;
+        [SerializeField]
+        [GreyOut]
+        private string niTeam;
+
+        private string niType;
 
         private SocketIOComponent socket;
 
@@ -35,6 +40,11 @@ namespace Project.Networking {
         public string GetID() {
             return id;
         }
+
+        public void SetNiType(string type) { this.niType = type; }
+        public string GetNiType() { return niType; }
+        public void SetNiTeam(string team) { this.niTeam = team; }
+        public string GetNiTeam() { return niTeam; }
 
         public bool IsControlling() {
             return isControlling;

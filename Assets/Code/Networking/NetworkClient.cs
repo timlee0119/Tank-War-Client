@@ -260,7 +260,8 @@ namespace Project.Networking {
                     GameObject go = Instantiate(tankIDtoPrefab[playersInfo[i]["tank"].i()]
                                                 , positionIDToContainer[playersInfo[i]["startPosition"].i()]);
                     // if I am orange team, rotate the camera and tank
-                    if (id == ClientID && playersInfo[i]["team"].RemoveQuotes() == "orange") {
+                    string team = playersInfo[i]["team"].str;
+                    if (id == ClientID && team == "orange") {
                         Transform cameraTransform = Camera.main.transform;
                         cameraTransform.eulerAngles = new Vector3(
                             cameraTransform.eulerAngles.x,
@@ -275,10 +276,12 @@ namespace Project.Networking {
                     }
 
                     // Map ID to networkidentity
-                    go.name = playersInfo[i]["username"].RemoveQuotes();
+                    go.name = playersInfo[i]["username"].str;
                     NetworkIdentity ni = go.GetComponent<NetworkIdentity>();
                     ni.SetControllerID(id);
                     ni.SetSocketReference(this);
+                    ni.SetNiType("Tank");
+                    ni.SetNiTeam(team);
                     serverObjects.Add(id, ni);
 
                     // initialize all players' info
@@ -298,6 +301,16 @@ namespace Project.Networking {
                 PlayerManager p = serverObjects[ClientID].GetComponent<PlayerManager>();
                 InGameUIManager.Instance.updateHealthBar(p.getFullHealth(), p.getHealth());
                 InGameUIManager.Instance.updateMagicBar(p.getFullMp(), p.getMp());
+
+                // remove all teamamates' rigidbody
+                for (int i = 0; i < playerNum; ++i) {
+                    string id = playersInfo[i]["id"].RemoveQuotes();
+                    if (playersInfo[i]["team"].str == serverObjects[ClientID].GetNiTeam()
+                        && id != ClientID) {
+                        Destroy(serverObjects[id].GetComponent<Rigidbody2D>());
+                        // TODO
+                    }
+                }
             });
 
             On("spawnGameObject", (E) => {
@@ -317,12 +330,14 @@ namespace Project.Networking {
                         ni = spawnedObject.GetComponent<NetworkIdentity>();
                         ni.SetControllerID(id);
                         ni.SetSocketReference(this);
+                        ni.SetNiType(name);
                         serverObjects.Add(id, ni);
 
                         float directionX = E.data["direction"]["x"].f;
                         float directionY = E.data["direction"]["y"].f;
-                        string activator = E.data["activator"].RemoveQuotes();
+                        string activator = E.data["activator"].str;
                         float speed = E.data["speed"].f;
+                        ni.SetNiTeam(serverObjects[activator].GetComponent<PlayerManager>().getTeam());
 
                         float rot = Mathf.Atan2(directionY, directionX) * Mathf.Rad2Deg;
                         Vector3 currentRotation = new Vector3(0, 0, rot - 90);
@@ -344,12 +359,13 @@ namespace Project.Networking {
                         else {
                             go = Instantiate(networkPrefabs.orangeSafeBoxPrefab, orangeSafeBoxContainer);
                         }
-                        Debug.Log("fuck");
+                        go.name = string.Format("{0} safe box", team);
                         ni = go.GetComponent<NetworkIdentity>();
-                        /*ni.SetControllerID(id);
-                        ni.SetSocketReference(this);*/
+                        ni.SetControllerID(id);
+                        ni.SetSocketReference(this);
+                        ni.SetNiType(name);
+                        ni.SetNiTeam(team);
                         serverObjects.Add(id, ni);
-                        Debug.Log("dd");
                         InGameUIManager.Instance.toggleSafeBoxHealthBar(team);
                         InGameUIManager.Instance.setSafeBoxHealthBarPosition(team, x, y);
                     }
@@ -383,6 +399,13 @@ namespace Project.Networking {
                     InGameUIManager.Instance.updateStatusBarHealth(playerIDtoStatusBarIndex[id]
                                                                   , pm.getFullHealth(), health);
                 }
+            });
+
+            On("setSafeBoxHealth", (E) => {
+                string team = E.data["team"].str;
+                float health = E.data["health"].f;
+                float fullHealth = E.data["fullHealth"].f;
+                InGameUIManager.Instance.updateSafeBoxHealth(team, fullHealth, health);
             });
 
             On("playerDied", (E) => {

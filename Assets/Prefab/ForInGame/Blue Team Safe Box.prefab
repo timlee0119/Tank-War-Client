@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 2794799198475511347}
   - component: {fileID: 2794799198475511344}
   - component: {fileID: 2794799198475511346}
+  - component: {fileID: -7307713123445387032}
+  - component: {fileID: -8740418954643968104}
   m_Layer: 0
   m_Name: Blue Team Safe Box
   m_TagString: Untagged
@@ -107,3 +109,37 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-7307713123445387032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2794799198475511345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 161465db367ba1049a0d1c5f405cc57e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifeTankPrefab: {fileID: 0}
+  fireTankPrefab: {fileID: 0}
+  shieldTankPrefab: {fileID: 0}
+  oceanTankPrefab: {fileID: 0}
+  sandTankPrefab: {fileID: 0}
+  shadowTankPrefab: {fileID: 0}
+  blueSafeBoxPrefab: {fileID: 0}
+  orangeSafeBoxPrefab: {fileID: 0}
+--- !u!114 &-8740418954643968104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2794799198475511345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e842d3919b2e4d5aa0fda517ba96339, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 
+  isControlling: 0

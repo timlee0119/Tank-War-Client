@@ -86,8 +86,8 @@ namespace Project.Managers {
         private float orangeSafeBoxHealthXOffset = 1.65f;
         private float orangeSafeBoxHealthYOffset = -1.5f;
 
-        private GameObject blueSafeBoxPosition;
-        private GameObject orangeSafeBoxPosition;
+        private GameObject blueSafeBoxStatusPosition;
+        private GameObject orangeSafeBoxStatusPosition;
 
         private List<Image> bulletList;
         private List<GameObject> statusBarList;
@@ -129,8 +129,10 @@ namespace Project.Managers {
             BlueSafeBoxHealthPosition.SetActive(false);
             OrangeSafeBoxHealthPosition.SetActive(false);
 
-            blueSafeBoxPosition = new GameObject();
-            orangeSafeBoxPosition = new GameObject();
+            blueSafeBoxStatusPosition = new GameObject();
+            blueSafeBoxStatusPosition.name = "blueSafeBoxStatusPosition";
+            orangeSafeBoxStatusPosition = new GameObject();
+            orangeSafeBoxStatusPosition.name = "orangeSafeBoxStatusPosition";
         }
 
         public void Update() {
@@ -152,25 +154,25 @@ namespace Project.Managers {
             // update safe boxes' position
             if (myteam == "blue") {
                 BlueSafeBoxHealthPosition.transform.position = new Vector3(
-                    blueSafeBoxPosition.transform.position.x - blueSafeBoxHealthXOffset,
-                    blueSafeBoxPosition.transform.position.y - orangeSafeBoxHealthYOffset,
+                    blueSafeBoxStatusPosition.transform.position.x - blueSafeBoxHealthXOffset,
+                    blueSafeBoxStatusPosition.transform.position.y - orangeSafeBoxHealthYOffset,
                     0
                 );
                 OrangeSafeBoxHealthPosition.transform.position = new Vector3(
-                    orangeSafeBoxPosition.transform.position.x - orangeSafeBoxHealthXOffset,
-                    orangeSafeBoxPosition.transform.position.y - blueSafeBoxHealthYOffset,
+                    orangeSafeBoxStatusPosition.transform.position.x - orangeSafeBoxHealthXOffset,
+                    orangeSafeBoxStatusPosition.transform.position.y - blueSafeBoxHealthYOffset,
                     0
                 );
             }
             else if (myteam == "orange") {
                 BlueSafeBoxHealthPosition.transform.position = new Vector3(
-                    blueSafeBoxPosition.transform.position.x + blueSafeBoxHealthXOffset,
-                    blueSafeBoxPosition.transform.position.y + blueSafeBoxHealthYOffset,
+                    blueSafeBoxStatusPosition.transform.position.x + blueSafeBoxHealthXOffset,
+                    blueSafeBoxStatusPosition.transform.position.y + blueSafeBoxHealthYOffset,
                     0
                 );
                 OrangeSafeBoxHealthPosition.transform.position = new Vector3(
-                    orangeSafeBoxPosition.transform.position.x + orangeSafeBoxHealthXOffset,
-                    orangeSafeBoxPosition.transform.position.y + orangeSafeBoxHealthYOffset,
+                    orangeSafeBoxStatusPosition.transform.position.x + orangeSafeBoxHealthXOffset,
+                    orangeSafeBoxStatusPosition.transform.position.y + orangeSafeBoxHealthYOffset,
                     0
                 );
             }
@@ -253,7 +255,6 @@ namespace Project.Managers {
         public void toggleSafeBoxHealthBar(string team) {
             if (team == "blue") {
                 bool isActive = BlueSafeBoxHealthPosition.activeSelf;
-                Debug.Log(isActive);
                 BlueSafeBoxHealthPosition.SetActive(!isActive);
             }
             else {
@@ -264,10 +265,31 @@ namespace Project.Managers {
 
         public void setSafeBoxHealthBarPosition(string team, float x, float y) {
             if (team == "blue") {
-                blueSafeBoxPosition.transform.position = new Vector3(x, y, 0);
+                blueSafeBoxStatusPosition.transform.position = new Vector3(x, y, 0);
             }
             else if (team == "orange") {
-                orangeSafeBoxPosition.transform.position = new Vector3(x, y, 0);
+                orangeSafeBoxStatusPosition.transform.position = new Vector3(x, y, 0);
+            }
+            else {
+                Debug.LogError("undefined team");
+            }
+        }
+
+        public void updateSafeBoxHealth(string team, float fullHealth, float health) {
+            float scale = health / fullHealth;
+            if (team == "blue") {
+                BlueSafeBoxHealth.transform.localScale = new Vector3(
+                    scale,
+                    BlueSafeBoxHealth.transform.localScale.y,
+                    1
+                );
+            }
+            else if (team == "orange") {
+                OrangeSafeBoxHealth.transform.localScale = new Vector3(
+                    scale,
+                    OrangeSafeBoxHealth.transform.localScale.y,
+                    1
+                );
             }
             else {
                 Debug.LogError("undefined team");
