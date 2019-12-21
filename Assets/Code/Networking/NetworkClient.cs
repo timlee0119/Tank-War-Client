@@ -35,6 +35,10 @@ namespace Project.Networking {
         private ServerObjects serverSpawnables;
         [SerializeField]
         private NetworkPrefabs networkPrefabs;
+        [SerializeField]
+        private GameObject explosion;
+        [SerializeField]
+        private Sprite deadSafeBox;
 
         public static string ClientID { get; private set; }
         public static int RoomID { get; private set; }
@@ -334,7 +338,7 @@ namespace Project.Networking {
                         string activator = E.data["activator"].str;
                         ni.SetNiTeam(serverObjects[activator].GetComponent<PlayerManager>().getTeam());
                         // if this bullet is spanwed by teammates, remove it's collider
-                        if (ni.GetNiTeam() == serverObjects[ClientID].GetNiTeam() && ni.GetID() != ClientID) {
+                        if (ni.GetNiTeam() == serverObjects[ClientID].GetNiTeam() && activator != ClientID) {
                             Destroy(ni.GetComponent<Rigidbody2D>());
                             Destroy(ni.GetComponent<CircleCollider2D>());
                         }
@@ -346,9 +350,6 @@ namespace Project.Networking {
                         float rot = Mathf.Atan2(directionY, directionX) * Mathf.Rad2Deg;
                         Vector3 currentRotation = new Vector3(0, 0, rot - 90);
                         spawnedObject.transform.rotation = Quaternion.Euler(currentRotation);
-
-                        WhoActivatedMe whoActivatedMe = spawnedObject.GetComponent<WhoActivatedMe>();
-                        whoActivatedMe.SetActivator(activator);
 
                         Projectile projectile = spawnedObject.GetComponent<Projectile>();
                         projectile.Direction = new Vector2(directionX, directionY);
@@ -369,9 +370,6 @@ namespace Project.Networking {
                         ni.SetSocketReference(this);
                         ni.SetNiType(name);
                         ni.SetNiTeam(team);
-                        if (team == serverObjects[ClientID].GetNiTeam()) {
-                            Destroy(ni.GetComponent<BoxCollider2D>());
-                        }
                         serverObjects.Add(id, ni);
                         InGameUIManager.Instance.toggleSafeBoxHealthBar(team);
                         InGameUIManager.Instance.setSafeBoxHealthBarPosition(team, x, y);
@@ -450,6 +448,22 @@ namespace Project.Networking {
             On("updateBulletNum", (E) => {
                 float bulletNum = E.data["bulletNum"].f;
                 InGameUIManager.Instance.updateBulletNum(bulletNum);
+            });
+
+            On("safeBoxExplode", (E) => {
+                string explodeSafeBoxID = E.data["explodeSafeBoxID"].str;
+                if (serverObjects[explodeSafeBoxID].GetNiTeam() == "blue") {
+                    GameObject explosion = Instantiate(this.explosion, blueSafeBoxContainer);
+                }
+                else {
+                    GameObject explosion = Instantiate(this.explosion, orangeSafeBoxContainer);
+                }
+                serverObjects[explodeSafeBoxID].GetComponent<SpriteRenderer>().sprite = deadSafeBox;
+            });
+
+            On("gameOver", (E) => {
+                string winTeam = E.data["winTeam"].str;
+                
             });
         }
     }

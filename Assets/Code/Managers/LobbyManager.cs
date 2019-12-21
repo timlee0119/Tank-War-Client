@@ -25,6 +25,8 @@ namespace Project.Managers {
         private Text GameMode_1;
         [SerializeField]
         private Text Status_1;
+        [SerializeField]
+        private Text Empty_1;
 
         [SerializeField]
         private Text GameRoomID_2;
@@ -32,6 +34,8 @@ namespace Project.Managers {
         private Text GameMode_2;
         [SerializeField]
         private Text Status_2;
+        [SerializeField]
+        private Text Empty_2;
 
         [SerializeField]
         private Text GameRoomID_3;
@@ -39,6 +43,8 @@ namespace Project.Managers {
         private Text GameMode_3;
         [SerializeField]
         private Text Status_3;
+        [SerializeField]
+        private Text Empty_3;
 
         [SerializeField]
         private Text GameRoomID_4;
@@ -46,7 +52,8 @@ namespace Project.Managers {
         private Text GameMode_4;
         [SerializeField]
         private Text Status_4;
-
+        [SerializeField]
+        private Text Empty_4;
 
         public InputField inputField;
 
@@ -113,24 +120,28 @@ namespace Project.Managers {
                 GameRoomID_4.text = "";
                 GameMode_4.text = "";
                 Status_4.text = "";
+                Empty_4.text = "Empty...";
             }
 
             if (count < 3) {
                 GameRoomID_3.text = "";
                 GameMode_3.text = "";
                 Status_3.text = "";
+                Empty_3.text = "Empty...";
             }
 
             if (count < 2) {
                 GameRoomID_2.text = "";
                 GameMode_2.text = "";
                 Status_2.text = "";
+                Empty_2.text = "Empty...";
             }
 
             if (count < 1) {
                 GameRoomID_1.text = "";
                 GameMode_1.text = "";
                 Status_1.text = "";
+                Empty_1.text = "Empty...";
             }
         }
 
@@ -139,14 +150,14 @@ namespace Project.Managers {
             Color color = new Color();
             ColorUtility.TryParseHtmlString("#F8FD00", out color);
             showdownButton.image.color = color;
-            ColorUtility.TryParseHtmlString("#FFFFFF", out color);
+            ColorUtility.TryParseHtmlString("#B49C9C", out color);
             heistButton.image.color = color;
         }
 
         public void PressHeistButton() {
             gameMode = "Heist";
             Color color = new Color();
-            ColorUtility.TryParseHtmlString("#C3C3C3", out color);
+            ColorUtility.TryParseHtmlString("#B49C9C", out color);
             showdownButton.image.color = color;
             ColorUtility.TryParseHtmlString("#F8FD00", out color);
             heistButton.image.color = color;

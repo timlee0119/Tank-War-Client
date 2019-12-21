@@ -346,6 +346,8 @@ MonoBehaviour:
   orangeSafeBoxContainer: {fileID: 1573639620}
   serverSpawnables: {fileID: 11400000, guid: 165dd897b9efc4c14b6ea1108653ed2d, type: 2}
   networkPrefabs: {fileID: 1386882647}
+  explosion: {fileID: 139366, guid: b185c1a9cf067374586d095111b15bd1, type: 3}
+  deadSafeBox: {fileID: 21300000, guid: 6668947e7ca84b342b896ff65f528c9c, type: 3}
 --- !u!4 &1386882646
 Transform:
   m_ObjectHideFlags: 0
