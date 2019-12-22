@@ -52,7 +52,7 @@ namespace Project.Networking {
 
         public static Dictionary<int, GameRoomInfo> gameRoomsInfo { get; private set; }
 
-        private List<GameObject> tankIDtoPrefab;
+        public static List<GameObject> tankIDtoPrefab;
 
         private List<Transform> positionIDToContainer;
 
@@ -266,6 +266,7 @@ namespace Project.Networking {
             On("spawnPlayers", (E) => {
                 int playerNum = E.data["playersInfo"].list.Count;
                 JSONObject playersInfo = E.data["playersInfo"];
+
                 for (int i = 0; i < playerNum; ++i) {
                     string id = playersInfo[i]["id"].RemoveQuotes();
                     GameObject go = Instantiate(tankIDtoPrefab[playersInfo[i]["tank"].i()]

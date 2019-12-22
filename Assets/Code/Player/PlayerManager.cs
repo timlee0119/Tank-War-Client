@@ -28,6 +28,8 @@ namespace Project.Player {
         [SerializeField]
         private float mp;
         [SerializeField]
+        private int tankID;
+        [SerializeField]
         private string passiveSkill;
         [SerializeField]
         private string super;
@@ -74,6 +76,7 @@ namespace Project.Player {
             health = info["health"].f;
             fullMp = info["fullMp"].f;
             mp = info["mp"].f;
+            tankID = info["tank"].i();
             passiveSkill = info["passiveSkill"].RemoveQuotes();
             super = info["super"].RemoveQuotes();
         }
@@ -84,6 +87,8 @@ namespace Project.Player {
         public float getMp() { return this.mp; }
         public float getFullMp() { return this.fullMp; }
         public void setHealth(float health) { this.health = health; }
+        public string getUsername() { return this.username; }
+        public int getTankID() { return tankID; }
 
         public float GetLastRotation() {
             return lastRotation;
