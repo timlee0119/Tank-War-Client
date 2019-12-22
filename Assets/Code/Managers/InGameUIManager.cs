@@ -184,6 +184,11 @@ namespace Project.Managers {
             }
             BlueSafeBoxHealthPosition.SetActive(false);
             OrangeSafeBoxHealthPosition.SetActive(false);
+            updateSafeBoxHealth("blue", 1, 1);
+            updateSafeBoxHealth("orange", 1, 1);
+            for (int i = 0; i < healthBarList.Count; ++i) {
+                updateStatusBarHealth(i, 1, 1);
+            }
         }
 
         public void activateGameUICanvas() {

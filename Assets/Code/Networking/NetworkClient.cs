@@ -41,6 +41,8 @@ namespace Project.Networking {
         private GameObject explosion;
         [SerializeField]
         private Sprite deadSafeBox;
+        [SerializeField]
+        private Camera cameraForMoving;
 
         public static string ClientID { get; private set; }
         public static int RoomID { get; private set; }
@@ -55,6 +57,8 @@ namespace Project.Networking {
         private List<Transform> positionIDToContainer;
 
         public static Dictionary<string, int> playerIDtoStatusBarIndex;
+
+        private string currentGameMode;
 
         // Use this for initialization
         public override void Start() {
@@ -231,6 +235,7 @@ namespace Project.Networking {
 
             On("gameStart", (E) => {
                 string mode = E.data["gameMode"].RemoveQuotes();
+                currentGameMode = mode;
                 if (mode == "Heist") {
                     Debug.Log("Start Heist");
                     SceneManagementManager.Instance.LoadLevel(SceneList.HEIST, (levelName) => {
@@ -458,13 +463,22 @@ namespace Project.Networking {
 
             On("safeBoxExplode", (E) => {
                 string explodeSafeBoxID = E.data["explodeSafeBoxID"].str;
-                if (serverObjects[explodeSafeBoxID].GetNiTeam() == "blue") {
-                    GameObject explosion = Instantiate(this.explosion, blueSafeBoxContainer);
+
+                // move camera to exploded safe box
+                // disable player managers first
+                foreach (KeyValuePair<string, UserInGameRoom> item in usersInGameRoom) {
+                    string id = item.Value.id;
+                    serverObjects[id].GetComponent<PlayerManager>().enabled = false;
                 }
-                else {
-                    GameObject explosion = Instantiate(this.explosion, orangeSafeBoxContainer);
-                }
-                serverObjects[explodeSafeBoxID].GetComponent<SpriteRenderer>().sprite = deadSafeBox;
+                Transform explodeSafeBoxContainer;
+                explodeSafeBoxContainer = (serverObjects[explodeSafeBoxID].GetNiTeam() == "blue"
+                                           ? blueSafeBoxContainer : orangeSafeBoxContainer);
+                serverObjects[ClientID].setControlling(false);
+                cameraForMoving.transform.position = Camera.main.transform.position;
+                cameraForMoving.transform.rotation = Camera.main.transform.rotation;
+                cameraForMoving.enabled = true;
+                cameraForMoving.GetComponent<MoveAnimation>().SetDestination(explodeSafeBoxContainer.position, 1);
+                StartCoroutine(explodeWaiter(explodeSafeBoxContainer, explodeSafeBoxID));
             });
 
             On("gameOver", (E) => {
@@ -474,6 +488,8 @@ namespace Project.Networking {
                 // clean up
                 InGameUIManager.Instance.CleanUp();
                 playerIDtoStatusBarIndex.Clear();
+                List<string> keysToDelete = new List<string>();
+                // clean server objects
                 foreach (KeyValuePair<string, NetworkIdentity> item in serverObjects) {
                     // retain win team players
                     if (item.Value.GetNiType() == "Tank" && item.Value.GetNiTeam() == winTeam) {
@@ -481,22 +497,47 @@ namespace Project.Networking {
                     }
                     else {
                         Destroy(item.Value.gameObject);
-                        serverObjects.Remove(item.Key);
+                        keysToDelete.Add(item.Key);
                     }
+                }
+                foreach (string key in keysToDelete) {
+                    serverObjects.Remove(key);
                 }
 
                 Debug.Log("Switching to GameOver");
                 SceneManagementManager.Instance.LoadLevel(SceneList.GAMEOVER, (levelName) => {
-                    if (gameRoomsInfo[RoomID].gameMode == "Heist") {
+                    // disable camera for moving
+                    cameraForMoving.enabled = false;
+                    // reset main camera rotation
+                    Transform cameraTransform = Camera.main.transform;
+                    cameraTransform.eulerAngles = new Vector3(
+                        cameraTransform.eulerAngles.x,
+                        cameraTransform.eulerAngles.y,
+                        0
+                    );
+
+                    if (currentGameMode == "Heist") {
                         Debug.Log("Unload HEIST scene");
                         SceneManagementManager.Instance.UnLoadLevel(SceneList.HEIST);
                     }
-                    else {
+                    else if (currentGameMode == "Showdown") {
                         Debug.Log("Unload SHOWDOWN scene");
                         SceneManagementManager.Instance.UnLoadLevel(SceneList.SHOWDOWN);
                     }
+                    else {
+                        Debug.LogError("undefined current game mode");
+                    }
                 });
             });
+        }
+
+        private IEnumerator explodeWaiter(Transform explodeSafeBoxContainer, string safeBoxID) {
+            yield return new WaitForSeconds(1);
+            // explode animation
+            GameObject explodeGO = Instantiate(this.explosion, explodeSafeBoxContainer);
+            serverObjects[safeBoxID].GetComponent<SpriteRenderer>().sprite = deadSafeBox;
+            yield return new WaitForSeconds(1);
+            Destroy(explodeGO);
         }
     }
 

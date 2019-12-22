@@ -47,6 +47,9 @@ namespace Project.Networking {
         public bool IsControlling() {
             return isControlling;
         }
+        public void setControlling(bool b) {
+            isControlling = b;
+        }
 
         public SocketIOComponent GetSocket() {
             return socket;
