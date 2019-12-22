@@ -29,9 +29,10 @@ namespace Project.Managers {
             int i = 0;
             foreach (KeyValuePair<string, NetworkIdentity> item in NetworkClient.serverObjects) {
                 int tankID = item.Value.GetComponent<PlayerManager>().getTankID();
-                GameObject go = Instantiate(NetworkClient.tankIDtoPrefab[tankID], winnerPositions[i]);
-                go.transform.position = winnerPositions[i].position;
-                go.GetComponent<PlayerManager>().enabled = false;
+                GameObject go = Instantiate(NetworkClient.tankIDtoPrefab[tankID], winnerPositions[i], false);
+                Destroy(go.GetComponent<Rigidbody2D>());
+                Destroy(go.GetComponent<CircleCollider2D>());
+                Destroy(go.GetComponent<PlayerManager>());
                 winnerNames[i].text = item.Value.GetComponent<PlayerManager>().getUsername();
 
                 Destroy(item.Value.gameObject);
@@ -52,6 +53,7 @@ namespace Project.Managers {
 
         public void backToGameRoom() {
             SceneManagementManager.Instance.LoadLevel(SceneList.GAMEROOM, (levelName) => {
+                SocketReference.Emit("finishPlaying");
                 SceneManagementManager.Instance.UnLoadLevel(SceneList.GAMEOVER);
             });
         }

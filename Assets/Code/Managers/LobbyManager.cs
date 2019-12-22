@@ -77,7 +77,7 @@ namespace Project.Managers {
                 if (count > 3) {
                     break;
                 }
-               
+
                 if (item.Value.player_num >= 1) {
                     count++;
                     if (count == 1) {

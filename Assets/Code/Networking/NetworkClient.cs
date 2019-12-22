@@ -155,6 +155,7 @@ namespace Project.Networking {
                     bool playing = E.data["gameRoomsInfo"][i]["playing"].b;
                     if (gameRoomsInfo.ContainsKey(id)) {
                         gameRoomsInfo[id].player_num = player_num;
+                        gameRoomsInfo[id].playing = playing;
                     } else {
                         GameRoomInfo gameRoom = new GameRoomInfo();
                         gameRoom.id = id;
