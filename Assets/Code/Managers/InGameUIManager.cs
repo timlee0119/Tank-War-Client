@@ -222,7 +222,6 @@ namespace Project.Managers {
                 else {
                     statusBarList[index].transform.position = new Vector3(x + blueTeammateStatusXOffset, y + blueTeammateStatusYOffset, 0);
                 }
-                
             }
             else {
                 if (myteam == "blue") {

@@ -32,6 +32,8 @@ namespace Project.Networking {
         [SerializeField]
         private Transform orangeSafeBoxContainer;
         [SerializeField]
+        private Transform outSideContainer;
+        [SerializeField]
         private ServerObjects serverSpawnables;
         [SerializeField]
         private NetworkPrefabs networkPrefabs;
@@ -329,7 +331,7 @@ namespace Project.Networking {
                     if (name == "Bullet") {
                         ServerObjectData sod = serverSpawnables.GetObjectByName(name);
                         // instantiate bullet position with random container because position would be updated immediately
-                        var spawnedObject = Instantiate(sod.Prefab, blue1Container);
+                        var spawnedObject = Instantiate(sod.Prefab, outSideContainer);
                         spawnedObject.transform.position = new Vector3(x, y, 0);
                         ni = spawnedObject.GetComponent<NetworkIdentity>();
                         ni.SetControllerID(id);
@@ -337,6 +339,9 @@ namespace Project.Networking {
                         ni.SetNiType(name);
                         string activator = E.data["activator"].str;
                         ni.SetNiTeam(serverObjects[activator].GetComponent<PlayerManager>().getTeam());
+                        // set bullet's activator in collisionDestroy
+                        ni.GetComponent<CollisionDestroy>().setActivator(activator);
+
                         // if this bullet is spanwed by teammates, remove it's collider
                         if (ni.GetNiTeam() == serverObjects[ClientID].GetNiTeam() && activator != ClientID) {
                             Destroy(ni.GetComponent<Rigidbody2D>());
@@ -440,6 +445,7 @@ namespace Project.Networking {
                     pm.setHealth(pm.getFullHealth());
                     InGameUIManager.Instance.updateStatusBarHealth(playerIDtoStatusBarIndex[id]
                                                                    , pm.getFullHealth(), pm.getHealth());
+                    InGameUIManager.Instance.Update();
                     // show status bar
                     InGameUIManager.Instance.toggleStatusBar(playerIDtoStatusBarIndex[id]);
                 }

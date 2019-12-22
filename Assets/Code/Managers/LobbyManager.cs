@@ -83,6 +83,7 @@ namespace Project.Managers {
                     if (count == 1) {
                         GameRoomID_1.text = item.Value.id.ToString();
                         GameMode_1.text = item.Value.gameMode;
+                        Empty_1.text = "";
                         if (item.Value.playing) {
                             Status_1.text = "Playing";
                         } else {
@@ -91,6 +92,7 @@ namespace Project.Managers {
                     } else if (count == 2) {
                         GameRoomID_2.text = item.Value.id.ToString();
                         GameMode_2.text = item.Value.gameMode;
+                        Empty_2.text = "";
                         if (item.Value.playing) {
                             Status_2.text = "Playing";
                         } else {
@@ -99,6 +101,7 @@ namespace Project.Managers {
                     } else if (count == 3) {
                         GameRoomID_3.text = item.Value.id.ToString();
                         GameMode_3.text = item.Value.gameMode;
+                        Empty_3.text = "";
                         if (item.Value.playing) {
                             Status_3.text = "Playing";
                         } else {
@@ -107,6 +110,7 @@ namespace Project.Managers {
                     } else if (count == 4) {
                         GameRoomID_4.text = item.Value.id.ToString();
                         GameMode_4.text = item.Value.gameMode;
+                        Empty_4.text = "";
                         if (item.Value.playing) {
                             Status_4.text = "Playing";
                         } else {
@@ -150,14 +154,14 @@ namespace Project.Managers {
             Color color = new Color();
             ColorUtility.TryParseHtmlString("#F8FD00", out color);
             showdownButton.image.color = color;
-            ColorUtility.TryParseHtmlString("#B49C9C", out color);
+            ColorUtility.TryParseHtmlString("#EED6FB", out color);
             heistButton.image.color = color;
         }
 
         public void PressHeistButton() {
             gameMode = "Heist";
             Color color = new Color();
-            ColorUtility.TryParseHtmlString("#B49C9C", out color);
+            ColorUtility.TryParseHtmlString("#EED6FB", out color);
             showdownButton.image.color = color;
             ColorUtility.TryParseHtmlString("#F8FD00", out color);
             heistButton.image.color = color;
