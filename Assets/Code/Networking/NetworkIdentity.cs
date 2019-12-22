@@ -15,10 +15,8 @@ namespace Project.Networking {
         [SerializeField]
         [GreyOut]
         private bool isControlling;
-        [SerializeField]
-        [GreyOut]
-        private string niTeam;
 
+        private string niTeam;
         private string niType;
 
         private SocketIOComponent socket;

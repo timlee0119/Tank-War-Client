@@ -469,7 +469,33 @@ namespace Project.Networking {
 
             On("gameOver", (E) => {
                 string winTeam = E.data["winTeam"].str;
-                
+                Debug.Log(string.Format("Game over. Win team: {0}", winTeam));
+
+                // clean up
+                InGameUIManager.Instance.CleanUp();
+                playerIDtoStatusBarIndex.Clear();
+                foreach (KeyValuePair<string, NetworkIdentity> item in serverObjects) {
+                    // retain win team players
+                    if (item.Value.GetNiType() == "Tank" && item.Value.GetNiTeam() == winTeam) {
+
+                    }
+                    else {
+                        Destroy(item.Value.gameObject);
+                        serverObjects.Remove(item.Key);
+                    }
+                }
+
+                Debug.Log("Switching to GameOver");
+                SceneManagementManager.Instance.LoadLevel(SceneList.GAMEOVER, (levelName) => {
+                    if (gameRoomsInfo[RoomID].gameMode == "Heist") {
+                        Debug.Log("Unload HEIST scene");
+                        SceneManagementManager.Instance.UnLoadLevel(SceneList.HEIST);
+                    }
+                    else {
+                        Debug.Log("Unload SHOWDOWN scene");
+                        SceneManagementManager.Instance.UnLoadLevel(SceneList.SHOWDOWN);
+                    }
+                });
             });
         }
     }

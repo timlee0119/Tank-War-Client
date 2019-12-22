@@ -82,5 +82,6 @@ namespace Project.Utility {
         public const string ONLINE = "Online";
         public const string HEIST = "Heist";
         public const string SHOWDOWN = "Showdown";
+        public const string GAMEOVER = "GameOver";
     }
 }

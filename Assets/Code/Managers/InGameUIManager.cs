@@ -178,6 +178,14 @@ namespace Project.Managers {
             }
         }
 
+        public void CleanUp() {
+            foreach (GameObject go in statusBarList) {
+                go.SetActive(false);
+            }
+            BlueSafeBoxHealthPosition.SetActive(false);
+            OrangeSafeBoxHealthPosition.SetActive(false);
+        }
+
         public void activateGameUICanvas() {
             UICanvas.enabled = true;
         }

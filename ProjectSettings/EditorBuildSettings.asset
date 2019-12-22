@@ -26,10 +26,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Heist.unity
     guid: 0520c137959f94237827e65cfc1052d1
+  - enabled: 1
+    path: Assets/Scenes/GameOver.unity
+    guid: 587c9834d4e103f42a4f89eec1f9655b
   - enabled: 0
-    path: Assets/Scenes/MainMenu.unity
-    guid: 9f42893fbf9a042139d2d2f8177caef8
-  - enabled: 0
-    path: Assets/Scenes/test.unity
-    guid: 370e4bca8b7bf4e0eaa7c0f7f4a59247
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects: {}
