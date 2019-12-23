@@ -426,7 +426,8 @@ MonoBehaviour:
     type: 3}
   superLifeTree: {fileID: 1522845108762958, guid: bbe25cc46e143584fae8f9ee3331d8eb,
     type: 3}
-  superLightShield: {fileID: 0}
+  superLightShield: {fileID: 1289693719137320, guid: b43563c827880d64492541f3779667f8,
+    type: 3}
   superPortal: {fileID: 1759280950308310, guid: 1a64203a38f57f041a865540aee30ce7,
     type: 3}
   superFireBall: {fileID: 0}

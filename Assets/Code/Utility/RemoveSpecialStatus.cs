@@ -25,12 +25,26 @@ namespace Project.Utility {
             // Remove buffs and debuffs
             switch (status) {
                 case "freeze":
+                    // if multiple freezes, unfreeze player until last one removed
+                    for (int i = toRemove; i < statusList.Count; ++i) {
+                        if (statusList[i].Key == "freeze") { return; }
+                    }
                     if (id == NetworkClient.ClientID) {
                         NetworkClient.serverObjects[NetworkClient.ClientID].setControlling(true);
                     }
                     break;
 
                 case "lifeTree":
+                    break;
+
+                case "portal":
+                    break;
+
+                case "lightShield":
+                    break;
+
+                case "sandStorm":
+
                     break;
 
                 default:

@@ -147,6 +147,4 @@ namespace Project.Player {
             }
         }
     }
-
-
 }

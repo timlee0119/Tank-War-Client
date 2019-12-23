@@ -1672,11 +1672,19 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 996118813}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07006849caa7e4344ae426a093fc172a, type: 3}
+  m_Script: {fileID: 11500000, guid: 7a8b48a1929bd42fc8a74e9281c1f25e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CamTransform: {fileID: 996118817}
+  CameraSpeedMultiplier: 1
+  Color: {r: 0.7830189, g: 0.4706048, b: 0.07756319, a: 0}
+  Size: 1
+  HorizontalSpeed: 2
+  VerticalSpeed: 2
+  Density: 1.77
+  Shader: {fileID: 4800000, guid: 00e888b8dfe2842c1a10e04b2d083b64, type: 3}
 --- !u!81 &996118815
 AudioListener:
   m_ObjectHideFlags: 0

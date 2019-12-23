@@ -8,6 +8,7 @@ using Project.Scriptable;
 using Project.Gameplay;
 using Project.Utility;
 using Project.Managers;
+using UB.Simple2dWeatherEffects.Standard;
 
 namespace Project.Networking {
     public class NetworkClient : SocketIOComponent {
@@ -62,6 +63,8 @@ namespace Project.Networking {
 
         public static Dictionary<string, List<KeyValuePair<string, GameObject>>> specialStatus;
 
+        private List<string> sandStormStatus;
+
         // Use this for initialization
         public override void Start() {
             base.Start();
@@ -94,6 +97,7 @@ namespace Project.Networking {
             positionIDToContainer.Add(orange3Container);
             playerIDtoStatusBarIndex = new Dictionary<string, int>();
             specialStatus = new Dictionary<string, List<KeyValuePair<string, GameObject>>>();
+            sandStormStatus = new List<string>();
         }
 
         private void setupEvents() {
@@ -409,7 +413,6 @@ namespace Project.Networking {
                 string id = E.data["id"].RemoveQuotes();
                 NetworkIdentity ni = serverObjects[id];
                 float health = E.data["health"].f;
-                Debug.Log(health);
 
                 PlayerManager pm = ni.GetComponent<PlayerManager>();
                 // update my UI Canvas health bar
@@ -547,17 +550,17 @@ namespace Project.Networking {
                 string super = E.data["super"].str;
 
                 Debug.Log("Server request " + id + " cast super: " + super);
-
+                GameObject effectPrefab;
                 switch (super) {
                     case "freeze":
                         foreach (KeyValuePair<string, UserInGameRoom> item in usersInGameRoom) {
                             if (item.Value.team != team && serverObjects[item.Key].gameObject.activeSelf) {
-                                GameObject go = Instantiate(networkPrefabs.superFreeze, serverObjects[item.Key].transform);
+                                effectPrefab = Instantiate(networkPrefabs.superFreeze, serverObjects[item.Key].transform);
                                 if (item.Key == ClientID) {
                                     serverObjects[ClientID].setControlling(false);
                                 }
 
-                                specialStatus[item.Key].Add(new KeyValuePair<string, GameObject>("freeze", go));
+                                specialStatus[item.Key].Add(new KeyValuePair<string, GameObject>("freeze", effectPrefab));
                                 StartCoroutine(removeStatusWaiter(5, item.Key, "freeze"));
                             }
                         }
@@ -566,14 +569,9 @@ namespace Project.Networking {
                     case "lifeTree":
                         foreach (KeyValuePair<string, UserInGameRoom> item in usersInGameRoom) {
                             if (item.Value.team == team) {
-                                GameObject go = Instantiate(networkPrefabs.superLifeTree, serverObjects[item.Key].transform);
-                                if (item.Key == ClientID) {
-                                    JSONObject j = new JSONObject();
-                                    j.AddField("id", item.Key);
-                                    Emit("useLifeTree", j);
-                                }
+                                effectPrefab = Instantiate(networkPrefabs.superLifeTree, serverObjects[item.Key].transform);
 
-                                specialStatus[item.Key].Add(new KeyValuePair<string, GameObject>("lifeTree", go));
+                                specialStatus[item.Key].Add(new KeyValuePair<string, GameObject>("lifeTree", effectPrefab));
                                 StartCoroutine(removeStatusWaiter(5, item.Key, "lifeTree"));
                             }
                         }
@@ -584,11 +582,29 @@ namespace Project.Networking {
                         break;
 
                     case "lightShield":
-
+                        effectPrefab = Instantiate(networkPrefabs.superLightShield, serverObjects[ClientID].transform);
+                        specialStatus[ClientID].Add(new KeyValuePair<string, GameObject>("lightShield", effectPrefab));
+                        StartCoroutine(removeStatusWaiter(6, ClientID, "lightShield"));
                         break;
 
                     case "sandStorm":
-
+                        D2FogsPE sandStormEffect = Camera.main.GetComponent<D2FogsPE>();
+                        sandStormEffect.enabled = true;
+                        if (serverObjects[ClientID].GetNiTeam() == team) {
+                            // small density
+                            sandStormStatus.Add("s");
+                            bool existsLarge = sandStormStatus.Exists(x => x == "l");
+                            if (!existsLarge) {
+                                sandStormEffect.Density = 0.8f;
+                                StartCoroutine(removeSandStormWaiter(15, "s"));
+                            }
+                        }
+                        else {
+                            // large density
+                            sandStormStatus.Add("l");
+                            sandStormEffect.Density = 1.5f;
+                            StartCoroutine(removeSandStormWaiter(15, "l"));
+                        }
                         break;
 
                     case "fireBall":
@@ -613,6 +629,22 @@ namespace Project.Networking {
         private IEnumerator removeStatusWaiter(float time, string id, string status) {
             yield return new WaitForSeconds(time);
             RemoveSpecialStatus.removeSpecialStatus(id, status, this);
+        }
+        private IEnumerator removeSandStormWaiter(float time, string size) {
+            yield return new WaitForSeconds(time);
+            sandStormStatus.Remove(size);
+            D2FogsPE sandStormEffect = Camera.main.GetComponent<D2FogsPE>();
+            bool existsLarge = sandStormStatus.Exists(x => x == "l");
+            if (!existsLarge) {
+                bool existsSmall = sandStormStatus.Exists(x => x == "s");
+                if (existsSmall) {
+                    sandStormEffect.Density = 0.8f;
+                }
+                else {
+                    sandStormEffect.enabled = false;
+                }
+            }
+
         }
     }
 
