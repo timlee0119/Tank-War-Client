@@ -60,6 +60,8 @@ namespace Project.Networking {
 
         private string currentGameMode;
 
+        public static Dictionary<string, List<KeyValuePair<string, GameObject>>> specialStatus;
+
         // Use this for initialization
         public override void Start() {
             base.Start();
@@ -91,6 +93,7 @@ namespace Project.Networking {
             positionIDToContainer.Add(orange2Container);
             positionIDToContainer.Add(orange3Container);
             playerIDtoStatusBarIndex = new Dictionary<string, int>();
+            specialStatus = new Dictionary<string, List<KeyValuePair<string, GameObject>>>();
         }
 
         private void setupEvents() {
@@ -301,6 +304,9 @@ namespace Project.Networking {
                     PlayerManager pm = go.GetComponent<PlayerManager>();
                     pm.setInfo(playersInfo[i]);
 
+                    // initialize special status list
+                    specialStatus[id] = new List<KeyValuePair<string, GameObject>>();
+
                     // map all players' id to status bar index
                     playerIDtoStatusBarIndex.Add(id, i);
                     // update other players' status bar username
@@ -430,6 +436,9 @@ namespace Project.Networking {
                 NetworkIdentity ni = serverObjects[id];
                 ni.gameObject.SetActive(false);
 
+                // clear all special status
+                RemoveSpecialStatus.removeAllStatus(id, this);
+
                 // hide status bar
                 if (id != ClientID) {
                     InGameUIManager.Instance.toggleStatusBar(playerIDtoStatusBarIndex[id]);
@@ -542,18 +551,32 @@ namespace Project.Networking {
                 switch (super) {
                     case "freeze":
                         foreach (KeyValuePair<string, UserInGameRoom> item in usersInGameRoom) {
-                            if (item.Value.team != team) {
+                            if (item.Value.team != team && serverObjects[item.Key].gameObject.activeSelf) {
                                 GameObject go = Instantiate(networkPrefabs.superFreeze, serverObjects[item.Key].transform);
                                 if (item.Key == ClientID) {
                                     serverObjects[ClientID].setControlling(false);
-                                    StartCoroutine(unFreezeWaiter(5, go));
                                 }
+
+                                specialStatus[item.Key].Add(new KeyValuePair<string, GameObject>("freeze", go));
+                                StartCoroutine(removeStatusWaiter(5, item.Key, "freeze"));
                             }
                         }
                         break;
 
                     case "lifeTree":
+                        foreach (KeyValuePair<string, UserInGameRoom> item in usersInGameRoom) {
+                            if (item.Value.team == team) {
+                                GameObject go = Instantiate(networkPrefabs.superLifeTree, serverObjects[item.Key].transform);
+                                if (item.Key == ClientID) {
+                                    JSONObject j = new JSONObject();
+                                    j.AddField("id", item.Key);
+                                    Emit("useLifeTree", j);
+                                }
 
+                                specialStatus[item.Key].Add(new KeyValuePair<string, GameObject>("lifeTree", go));
+                                StartCoroutine(removeStatusWaiter(5, item.Key, "lifeTree"));
+                            }
+                        }
                         break;
 
                     case "portal":
@@ -587,10 +610,9 @@ namespace Project.Networking {
             yield return new WaitForSeconds(1);
             Destroy(explodeGO);
         }
-        private IEnumerator unFreezeWaiter(float time, GameObject go) {
+        private IEnumerator removeStatusWaiter(float time, string id, string status) {
             yield return new WaitForSeconds(time);
-            Destroy(go);
-            serverObjects[ClientID].setControlling(true);
+            RemoveSpecialStatus.removeSpecialStatus(id, status, this);
         }
     }
 

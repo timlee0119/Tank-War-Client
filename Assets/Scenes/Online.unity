@@ -424,7 +424,8 @@ MonoBehaviour:
     type: 3}
   superFreeze: {fileID: 1407046708484698, guid: d41e07ee50b78fb4b888485f59d08b6c,
     type: 3}
-  superLifeTree: {fileID: 0}
+  superLifeTree: {fileID: 1522845108762958, guid: bbe25cc46e143584fae8f9ee3331d8eb,
+    type: 3}
   superLightShield: {fileID: 0}
   superPortal: {fileID: 1759280950308310, guid: 1a64203a38f57f041a865540aee30ce7,
     type: 3}
