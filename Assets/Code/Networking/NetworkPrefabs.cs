@@ -12,5 +12,11 @@ namespace Project.Networking {
         public GameObject shadowTankPrefab;
         public GameObject blueSafeBoxPrefab;
         public GameObject orangeSafeBoxPrefab;
+        public GameObject superFreeze;
+        public GameObject superLifeTree;
+        public GameObject superLightShield;
+        public GameObject superPortal;
+        public GameObject superFireBall;
+        public GameObject superSandStorm;
     }
 }

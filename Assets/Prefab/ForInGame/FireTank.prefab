@@ -204,7 +204,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b9c20ce64674ad7974b46a1c4ba2b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotation: 100
+  rotation: 160
   speed: 4
   username: 
   team: 
@@ -213,6 +213,7 @@ MonoBehaviour:
   health: 0
   fullMp: 0
   mp: 0
+  tankID: 0
   passiveSkill: 
   super: 
   barrelPivot: {fileID: 8378966151280787396}

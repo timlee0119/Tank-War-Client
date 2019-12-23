@@ -531,6 +531,52 @@ namespace Project.Networking {
                     }
                 });
             });
+
+            On("useSuper", (E) => {
+                string id = E.data["id"].RemoveQuotes();
+                string team = E.data["team"].str;
+                string super = E.data["super"].str;
+
+                Debug.Log("Server request " + id + " cast super: " + super);
+
+                switch (super) {
+                    case "freeze":
+                        foreach (KeyValuePair<string, UserInGameRoom> item in usersInGameRoom) {
+                            if (item.Value.team != team) {
+                                GameObject go = Instantiate(networkPrefabs.superFreeze, serverObjects[item.Key].transform);
+                                if (item.Key == ClientID) {
+                                    serverObjects[ClientID].setControlling(false);
+                                    StartCoroutine(unFreezeWaiter(5, go));
+                                }
+                            }
+                        }
+                        break;
+
+                    case "lifeTree":
+
+                        break;
+
+                    case "portal":
+
+                        break;
+
+                    case "lightShield":
+
+                        break;
+
+                    case "sandStorm":
+
+                        break;
+
+                    case "fireBall":
+
+                        break;
+
+                    default:
+                        Debug.LogError("WTF is this super");
+                        break;
+                }
+            });
         }
 
         private IEnumerator explodeWaiter(Transform explodeSafeBoxContainer, string safeBoxID) {
@@ -540,6 +586,11 @@ namespace Project.Networking {
             serverObjects[safeBoxID].GetComponent<SpriteRenderer>().sprite = deadSafeBox;
             yield return new WaitForSeconds(1);
             Destroy(explodeGO);
+        }
+        private IEnumerator unFreezeWaiter(float time, GameObject go) {
+            yield return new WaitForSeconds(time);
+            Destroy(go);
+            serverObjects[ClientID].setControlling(true);
         }
     }
 

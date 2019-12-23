@@ -204,7 +204,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 150981648}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: -1, z: 73.03906}
+  m_LocalPosition: {x: 1.51, y: -0.52, z: 73.03906}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -234,7 +234,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 269992368}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12, y: -1, z: 0}
+  m_LocalPosition: {x: -11.49, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -294,7 +294,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1141340994}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 13, z: 0}
+  m_LocalPosition: {x: 1.505, y: 12.486, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -324,7 +324,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1302540415}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12, y: 13, z: 0}
+  m_LocalPosition: {x: -11.503, y: 12.504, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -422,6 +422,14 @@ MonoBehaviour:
     type: 3}
   orangeSafeBoxPrefab: {fileID: 8787179297190763880, guid: 85cfa4792896bec4e9467dd6c00123b6,
     type: 3}
+  superFreeze: {fileID: 1407046708484698, guid: d41e07ee50b78fb4b888485f59d08b6c,
+    type: 3}
+  superLifeTree: {fileID: 0}
+  superLightShield: {fileID: 0}
+  superPortal: {fileID: 1759280950308310, guid: 1a64203a38f57f041a865540aee30ce7,
+    type: 3}
+  superFireBall: {fileID: 0}
+  superSandStorm: {fileID: 0}
 --- !u!1 &1465407136
 GameObject:
   m_ObjectHideFlags: 0

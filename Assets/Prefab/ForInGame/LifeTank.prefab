@@ -203,8 +203,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b9c20ce64674ad7974b46a1c4ba2b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotation: 160
   speed: 4
-  rotation: 100
+  username: 
+  team: 
+  startPosition: 0
+  fullHealth: 0
+  health: 0
+  fullMp: 0
+  mp: 0
+  tankID: 0
+  passiveSkill: 
+  super: 
   barrelPivot: {fileID: 9035254452654594320}
   networkIdentity: {fileID: 9035254451494912046}
   bulletSpawnPoint: {fileID: 731732411667190781}

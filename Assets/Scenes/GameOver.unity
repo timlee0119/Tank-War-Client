@@ -258,12 +258,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   winnerPositions:
-  - {fileID: 1529189076}
   - {fileID: 1682270535}
+  - {fileID: 1529189076}
   - {fileID: 131964802}
   winnerNames:
-  - {fileID: 1710122652}
   - {fileID: 828028909}
+  - {fileID: 1710122652}
   - {fileID: 150571369}
 --- !u!4 &490151426
 Transform:

@@ -10,7 +10,7 @@ namespace Project.Player {
         const float BARREL_PIVOT_OFFSET = 90.0f;
 
         [SerializeField]
-        private float rotation = 100;
+        private float rotation = 160;
         [SerializeField]
         private float speed;
         [SerializeField]
@@ -64,6 +64,7 @@ namespace Project.Player {
                 checkMovement();
                 checkAiming();
                 checkShooting();
+                checkSuper();
             }
         }
 
@@ -133,6 +134,16 @@ namespace Project.Player {
 
                 // Send Bullet
                 networkIdentity.GetSocket().Emit("fireBullet", new JSONObject(JsonUtility.ToJson(bulletData)));
+            }
+        }
+
+        private void checkSuper() {
+            if (Input.GetKeyDown("space") && mp == fullMp) {
+                Debug.Log("I want to cast super");
+
+                JSONObject j = new JSONObject();
+                j.AddField("id", networkIdentity.GetID());
+                networkIdentity.GetSocket().Emit("useSuper", j);
             }
         }
     }
