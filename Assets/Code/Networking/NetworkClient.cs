@@ -583,8 +583,8 @@ namespace Project.Networking {
 
                     case "lightShield":
                         effectPrefab = Instantiate(networkPrefabs.superLightShield, serverObjects[ClientID].transform);
-                        specialStatus[ClientID].Add(new KeyValuePair<string, GameObject>("lightShield", effectPrefab));
-                        StartCoroutine(removeStatusWaiter(6, ClientID, "lightShield"));
+                        specialStatus[id].Add(new KeyValuePair<string, GameObject>("lightShield", effectPrefab));
+                        StartCoroutine(removeStatusWaiter(6, id, "lightShield"));
                         break;
 
                     case "sandStorm":
@@ -596,8 +596,8 @@ namespace Project.Networking {
                             bool existsLarge = sandStormStatus.Exists(x => x == "l");
                             if (!existsLarge) {
                                 sandStormEffect.Density = 0.8f;
-                                StartCoroutine(removeSandStormWaiter(15, "s"));
                             }
+                            StartCoroutine(removeSandStormWaiter(15, "s"));
                         }
                         else {
                             // large density
