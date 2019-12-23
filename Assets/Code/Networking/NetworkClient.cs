@@ -39,8 +39,6 @@ namespace Project.Networking {
         [SerializeField]
         private NetworkPrefabs networkPrefabs;
         [SerializeField]
-        private GameObject explosion;
-        [SerializeField]
         private Sprite deadSafeBox;
         [SerializeField]
         private Camera cameraForMoving;
@@ -279,6 +277,12 @@ namespace Project.Networking {
                     string id = playersInfo[i]["id"].RemoveQuotes();
                     GameObject go = Instantiate(tankIDtoPrefab[playersInfo[i]["tank"].i()]
                                                 , positionIDToContainer[playersInfo[i]["startPosition"].i()]);
+                    // initialize my aiming line
+                    if (id == ClientID) {
+                        Instantiate(networkPrefabs.aimingLine, go.GetComponent<PlayerManager>().getBarrelPivot());
+                        Instantiate(networkPrefabs.guideArrow, go.gameObject.transform);
+                    }
+
                     // if I am orange team, rotate the camera and tank
                     string team = playersInfo[i]["team"].str;
                     if (id == ClientID && team == "orange") {
@@ -341,7 +345,7 @@ namespace Project.Networking {
                 string id = E.data["id"].RemoveQuotes();
                 float x = E.data["position"]["x"].f;
                 float y = E.data["position"]["y"].f;
-                Debug.LogFormat("Server wants us to spawn a '{0}'", name);
+                Debug.LogFormat("Server wants us to spawn a '{0}' at {1}, {2}", name, x, y);
 
                 if (!serverObjects.ContainsKey(id)) {
                     NetworkIdentity ni;
@@ -396,6 +400,30 @@ namespace Project.Networking {
                         InGameUIManager.Instance.toggleSafeBoxHealthBar(team);
                         InGameUIManager.Instance.setSafeBoxHealthBarPosition(team, x, y);
                     }
+                    else if (name == "PortalPair") {
+                        string team = E.data["team"].str;
+                        string id2 = E.data["id2"].RemoveQuotes();
+                        float x2 = E.data["position2"]["x"].f;
+                        float y2 = E.data["position2"]["y"].f;
+                        // Instantiate two portals
+                        GameObject portal = Instantiate(networkPrefabs.superPortal, outSideContainer);
+                        GameObject portal2 = Instantiate(networkPrefabs.superPortal, outSideContainer);
+                        portal.transform.position = new Vector3(x, y, 0);
+                        portal2.transform.position = new Vector3(x2, y2, 0);
+                        portal.name = string.Format("Portal {0}", id);
+                        portal2.name = string.Format("Portal {0}", id2);
+                        ni = portal.GetComponent<NetworkIdentity>();
+                        ni.SetNiType("Portal");
+                        ni.SetNiTeam(team);
+                        serverObjects.Add(id, ni);
+                        ni = portal2.GetComponent<NetworkIdentity>();
+                        ni.SetNiType("Portal");
+                        ni.SetNiTeam(team);
+                        serverObjects.Add(id2, ni);
+                        // set portal pair
+                        portal.GetComponent<PortalCollision>().pairedPortalID = id2;
+                        portal2.GetComponent<PortalCollision>().pairedPortalID = id;
+                    }
                     else {
                         Debug.LogError("undefined object name");
                     }
@@ -427,6 +455,11 @@ namespace Project.Networking {
                 }
             });
 
+            On("setPlayerSpeed", (E) => {
+                float speed = E.data["speed"].f;
+                serverObjects[ClientID].GetComponent<PlayerManager>().setSpeed(speed);
+            });
+
             On("setSafeBoxHealth", (E) => {
                 string team = E.data["team"].str;
                 float health = E.data["health"].f;
@@ -453,6 +486,9 @@ namespace Project.Networking {
                 NetworkIdentity ni = serverObjects[id];
                 ni.transform.position = positionIDToContainer[E.data["startPosition"].i()].position;
                 ni.gameObject.SetActive(true);
+                // rotate back player
+                ni.transform.eulerAngles = new Vector3(0, 0, (ni.GetNiTeam() == "blue" ? 0 : 180));
+
                 PlayerManager pm = ni.GetComponent<PlayerManager>();
 
                 // update my health bar and others' status bar
@@ -473,6 +509,13 @@ namespace Project.Networking {
             On("updateBulletNum", (E) => {
                 float bulletNum = E.data["bulletNum"].f;
                 InGameUIManager.Instance.updateBulletNum(bulletNum);
+            });
+
+            On("updateMp", (E) => {
+                float mp = E.data["mp"].f;
+                float fullMp = E.data["fullMp"].f;
+                serverObjects[ClientID].GetComponent<PlayerManager>().setMp(mp);
+                InGameUIManager.Instance.updateMagicBar(fullMp, mp);
             });
 
             On("safeBoxExplode", (E) => {
@@ -517,6 +560,9 @@ namespace Project.Networking {
                 foreach (string key in keysToDelete) {
                     serverObjects.Remove(key);
                 }
+                // clean sand storm
+                Camera.main.GetComponent<D2FogsPE>().enabled = false;
+                sandStormStatus.Clear();
 
                 Debug.Log("Switching to GameOver");
                 SceneManagementManager.Instance.LoadLevel(SceneList.GAMEOVER, (levelName) => {
@@ -578,7 +624,6 @@ namespace Project.Networking {
                         break;
 
                     case "portal":
-
                         break;
 
                     case "lightShield":
@@ -608,7 +653,29 @@ namespace Project.Networking {
                         break;
 
                     case "fireBall":
+                        Transform bulletSpawnPoint = serverObjects[id].GetComponent<PlayerManager>().getBulletSpawnPoint();
+                        GameObject fireBall = Instantiate(networkPrefabs.superFireBall, outSideContainer);
+                        fireBall.GetComponent<FireBallCollision>().activator = id;
+                        fireBall.GetComponent<FireBallCollision>().setSocket(this);
+                        float directionX = bulletSpawnPoint.up.x;
+                        float directionY = bulletSpawnPoint.up.y;
+                        float speed = 0.5f;
+                        float rot = Mathf.Atan2(directionY, directionX) * Mathf.Rad2Deg;
+                        Vector3 currentRotation = new Vector3(0, 0, rot - 90);
+                        fireBall.transform.position = new Vector3(
+                            bulletSpawnPoint.position.x + 0.8f * directionX,
+                            bulletSpawnPoint.position.y + 0.8f * directionY,
+                            0
+                        );
+                        fireBall.transform.rotation = Quaternion.Euler(currentRotation);
 
+                        StartCoroutine(fireBallWaiter(1, fireBall, directionX, directionY, speed));
+
+                        // if this bullet is spanwed by teammates, remove it's collider
+                        /*if (ni.GetNiTeam() == serverObjects[ClientID].GetNiTeam() && activator != ClientID) {
+                            Destroy(ni.GetComponent<Rigidbody2D>());
+                            Destroy(ni.GetComponent<CircleCollider2D>());
+                        }*/
                         break;
 
                     default:
@@ -621,7 +688,7 @@ namespace Project.Networking {
         private IEnumerator explodeWaiter(Transform explodeSafeBoxContainer, string safeBoxID) {
             yield return new WaitForSeconds(1);
             // explode animation
-            GameObject explodeGO = Instantiate(this.explosion, explodeSafeBoxContainer);
+            GameObject explodeGO = Instantiate(networkPrefabs.explosionSafeBox, explodeSafeBoxContainer);
             serverObjects[safeBoxID].GetComponent<SpriteRenderer>().sprite = deadSafeBox;
             yield return new WaitForSeconds(1);
             Destroy(explodeGO);
@@ -644,7 +711,12 @@ namespace Project.Networking {
                     sandStormEffect.enabled = false;
                 }
             }
-
+        }
+        private IEnumerator fireBallWaiter(float time, GameObject fireBall, float x, float y, float speed) {
+            yield return new WaitForSeconds(time);
+            Projectile projectile = fireBall.GetComponent<Projectile>();
+            projectile.Direction = new Vector2(x, y);
+            projectile.Speed = speed;
         }
     }
 

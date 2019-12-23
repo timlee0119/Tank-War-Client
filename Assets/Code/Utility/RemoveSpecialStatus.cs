@@ -44,9 +44,7 @@ namespace Project.Utility {
                     break;
 
                 case "sandStorm":
-
                     break;
-
                 default:
 
                     break;

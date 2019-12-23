@@ -377,7 +377,6 @@ MonoBehaviour:
   outSideContainer: {fileID: 150925164}
   serverSpawnables: {fileID: 11400000, guid: 165dd897b9efc4c14b6ea1108653ed2d, type: 2}
   networkPrefabs: {fileID: 1386882647}
-  explosion: {fileID: 139366, guid: b185c1a9cf067374586d095111b15bd1, type: 3}
   deadSafeBox: {fileID: 21300000, guid: 6668947e7ca84b342b896ff65f528c9c, type: 3}
   cameraForMoving: {fileID: 1465407139}
 --- !u!4 &1386882646
@@ -428,10 +427,17 @@ MonoBehaviour:
     type: 3}
   superLightShield: {fileID: 1289693719137320, guid: b43563c827880d64492541f3779667f8,
     type: 3}
-  superPortal: {fileID: 1759280950308310, guid: 1a64203a38f57f041a865540aee30ce7,
+  superPortal: {fileID: 1954760484146740, guid: 1944c3a5edd5bf64eaa0e4e93117a78b,
     type: 3}
-  superFireBall: {fileID: 0}
-  superSandStorm: {fileID: 0}
+  superFireBall: {fileID: 1759280950308310, guid: 1a64203a38f57f041a865540aee30ce7,
+    type: 3}
+  aimingLine: {fileID: 6265805129007788296, guid: d8b03a3e9bdcbd34499ed22f40f5d2dc,
+    type: 3}
+  guideArrow: {fileID: 7459846369343329298, guid: 660930b4b236cbd469c853ecc7b997ac,
+    type: 3}
+  explosionSafeBox: {fileID: 139366, guid: b185c1a9cf067374586d095111b15bd1, type: 3}
+  explosionFireBall: {fileID: 3197056806556634964, guid: c6fe11a6590b66644a656d1cacc99905,
+    type: 3}
 --- !u!1 &1465407136
 GameObject:
   m_ObjectHideFlags: 0

@@ -223,14 +223,20 @@ namespace Project.Managers {
         }
 
         public void PressSelectLeft() {
-            JSONObject j = new JSONObject();
-            j.AddField("direction", "left");
-            SocketReference.Emit("switchTank", j);
+            UserInGameRoom me = NetworkClient.usersInGameRoom[NetworkClient.ClientID];
+            if (!me.ready) {
+                JSONObject j = new JSONObject();
+                j.AddField("direction", "left");
+                SocketReference.Emit("switchTank", j);
+            }
         }
         public void PressSelectRight() {
-            JSONObject j = new JSONObject();
-            j.AddField("direction", "right");
-            SocketReference.Emit("switchTank", j);
+            UserInGameRoom me = NetworkClient.usersInGameRoom[NetworkClient.ClientID];
+            if (!me.ready) {
+                JSONObject j = new JSONObject();
+                j.AddField("direction", "right");
+                SocketReference.Emit("switchTank", j);
+            }
         }
     }
 }

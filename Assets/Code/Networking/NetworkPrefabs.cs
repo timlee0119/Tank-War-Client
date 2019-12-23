@@ -17,6 +17,8 @@ namespace Project.Networking {
         public GameObject superLightShield;
         public GameObject superPortal;
         public GameObject superFireBall;
-        public GameObject superSandStorm;
+        public GameObject aimingLine;
+        public GameObject guideArrow;
+        public GameObject explosionSafeBox;
     }
 }

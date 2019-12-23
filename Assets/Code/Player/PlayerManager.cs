@@ -18,7 +18,7 @@ namespace Project.Player {
         [SerializeField]
         private string team;
         [SerializeField]
-        private int startPosition;   // 0,1,2: blue123; 3,4,5: orange123
+        private int startPosition;   // 0, 1, 2: blue123; 3, 4, 5: orange123
         [SerializeField]
         private float fullHealth;
         [SerializeField]
@@ -86,10 +86,14 @@ namespace Project.Player {
         public float getHealth() { return this.health; }
         public float getFullHealth() { return this.fullHealth; }
         public float getMp() { return this.mp; }
+        public void setMp(float mp) { this.mp = mp; }
         public float getFullMp() { return this.fullMp; }
         public void setHealth(float health) { this.health = health; }
         public string getUsername() { return this.username; }
         public int getTankID() { return tankID; }
+        public void setSpeed(float speed) { this.speed = speed; }
+        public Transform getBarrelPivot() { return this.barrelPivot; }
+        public Transform getBulletSpawnPoint() { return this.bulletSpawnPoint; }
 
         public float GetLastRotation() {
             return lastRotation;

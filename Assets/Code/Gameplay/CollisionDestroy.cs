@@ -21,7 +21,8 @@ namespace Project.Gameplay {
 
             // if ni == null: wall
             // ni.GetNiTeam(): collision object's team; this.networkIdentity.GetNiTeam(): my activator's team
-            if (ni == null || ni.GetNiTeam() != this.networkIdentity.GetNiTeam() || ni.GetNiType() == "SafeBox") {
+            if (ni == null || ni.GetNiTeam() != this.networkIdentity.GetNiTeam() 
+                || ni.GetNiType() == "SafeBox" || ni.GetNiType() == "Portal") {
                 JSONObject j = new JSONObject();
                 j.AddField("bulletID", networkIdentity.GetID());
                 string hitObjectID = (ni == null) ? "" : ni.GetID();

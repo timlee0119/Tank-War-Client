@@ -65,7 +65,6 @@ namespace Project.Managers {
             }
         }
 
-
         void Update() {
             capacity = inputField.text;
 
