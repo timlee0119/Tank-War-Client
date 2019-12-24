@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Project.Networking;
+using Project.Utility;
 using SocketIO;
 using UnityEngine;
 using UnityEngine.UI;
@@ -230,6 +231,7 @@ namespace Project.Managers {
                 SocketReference.Emit("switchTank", j);
             }
         }
+
         public void PressSelectRight() {
             UserInGameRoom me = NetworkClient.usersInGameRoom[NetworkClient.ClientID];
             if (!me.ready) {
@@ -237,6 +239,14 @@ namespace Project.Managers {
                 j.AddField("direction", "right");
                 SocketReference.Emit("switchTank", j);
             }
+        }
+
+        public void PressExit() {
+            SocketReference.Emit("switchToBaseLobby");
+            NetworkClient.usersInGameRoom.Clear();
+            SceneManagementManager.Instance.LoadLevel(SceneList.LOBBY, (levelName) => {
+                SceneManagementManager.Instance.UnLoadLevel(SceneList.GAMEROOM);
+            });
         }
     }
 }

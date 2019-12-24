@@ -142,7 +142,7 @@ namespace Project.Player {
         }
 
         private void checkSuper() {
-            if (Input.GetKeyDown("space") && mp == fullMp) {
+            if (Input.GetKeyDown("space")) {
                 Debug.Log("I want to cast super");
 
                 JSONObject j = new JSONObject();

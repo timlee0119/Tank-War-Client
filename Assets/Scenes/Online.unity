@@ -360,7 +360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c1fa3880040454994e00d29862cd3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: ws://192.168.50.46:52300/socket.io/?EIO=4&transport=websocket
+  url: ws://localhost:52300/socket.io/?EIO=4&transport=websocket
   autoConnect: 1
   reconnectDelay: 5
   ackExpirationTime: 1800
@@ -436,8 +436,6 @@ MonoBehaviour:
   guideArrow: {fileID: 7459846369343329298, guid: 660930b4b236cbd469c853ecc7b997ac,
     type: 3}
   explosionSafeBox: {fileID: 139366, guid: b185c1a9cf067374586d095111b15bd1, type: 3}
-  explosionFireBall: {fileID: 3197056806556634964, guid: c6fe11a6590b66644a656d1cacc99905,
-    type: 3}
 --- !u!1 &1465407136
 GameObject:
   m_ObjectHideFlags: 0

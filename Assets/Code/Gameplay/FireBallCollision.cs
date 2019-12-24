@@ -18,16 +18,21 @@ namespace Project.Gameplay {
             NetworkIdentity ni = collision.gameObject.GetComponent<NetworkIdentity>();
             bool destroy = false;
             // if ni == null: wall
-            if (ni == null) {
+            if (ni == null || (ni.GetNiType() == "SafeBox" && ni.GetNiTeam() == NetworkClient.serverObjects[activator].GetNiTeam())) {
                 destroy = true;
             }
-            else if ((ni.GetNiType() == "Tank" && ni.GetID() != activator) || ni.GetNiType() == "SafeBox") {
-                JSONObject j = new JSONObject();
-                j.AddField("hitObjectType", ni.GetNiType());
-                j.AddField("hitObjectID", ni.GetID());
-                j.AddField("activator", activator);
+            //else if ((ni.GetNiType() == "Tank" && ni.GetID() != activator) || ni.GetNiType() == "SafeBox") {
+            else if ((ni.GetNiType() == "Tank" || ni.GetNiType() == "SafeBox") &&
+                      ni.GetNiTeam() != NetworkClient.serverObjects[activator].GetNiTeam()) {
 
-                socketReference.Emit("fireBallCollision", j);
+                if (activator == NetworkClient.ClientID) {
+                    JSONObject j = new JSONObject();
+                    j.AddField("hitObjectType", ni.GetNiType());
+                    j.AddField("hitObjectID", ni.GetID());
+                    j.AddField("activator", activator);
+                    socketReference.Emit("fireBallCollision", j);
+                }
+
                 if (ni.GetNiType() == "SafeBox") {
                     destroy = true;
                 }

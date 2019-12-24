@@ -269,6 +269,10 @@ namespace Project.Networking {
                 }
             });
 
+            On("updateTime", (E) => {
+                // todo
+            });
+
             On("spawnPlayers", (E) => {
                 int playerNum = E.data["playersInfo"].list.Count;
                 JSONObject playersInfo = E.data["playersInfo"];
