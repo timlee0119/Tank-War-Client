@@ -30,6 +30,9 @@ namespace Project.Gameplay {
                 string hitObjectType = (ni == null) ? "" : ni.GetNiType();
                 j.AddField("hitObjectType", hitObjectType);
 
+                if (ni != null && ni.GetNiType() == "Tank") {
+                    ni.GetComponent<AudioSource>().Play();
+                }
                 networkIdentity.GetSocket().Emit("collisionDestroy", j);
             }
         }

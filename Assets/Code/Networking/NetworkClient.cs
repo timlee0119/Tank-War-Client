@@ -45,6 +45,17 @@ namespace Project.Networking {
         [SerializeField]
         private Camera cameraForMoving;
 
+        [SerializeField]
+        private AudioClip menuBackground;
+        [SerializeField]
+        private AudioClip battleBackground;
+        [SerializeField]
+        private AudioClip winnerBackground;
+        [SerializeField]
+        private AudioClip loserBackground;
+        [SerializeField]
+        private AudioClip sandStormBackground;
+
         public static string ClientID { get; private set; }
         public static int RoomID { get; private set; }
         public static Dictionary<string, UserInGameRoom> usersInGameRoom { get; private set; }
@@ -242,6 +253,11 @@ namespace Project.Networking {
             });
 
             On("gameStart", (E) => {
+                // switch background music
+                AudioSource audio = Camera.main.GetComponent<AudioSource>();
+                audio.clip = battleBackground;
+                audio.Play();
+
                 string mode = E.data["gameMode"].RemoveQuotes();
                 currentGameMode = mode;
                 if (mode == "Heist") {
@@ -611,6 +627,14 @@ namespace Project.Networking {
                     else {
                         Debug.LogError("undefined current game mode");
                     }
+
+                    AudioSource audio = Camera.main.GetComponent<AudioSource>();
+                    if (serverObjects.ContainsKey(ClientID)) {
+                        audio.clip = winnerBackground;
+                    } else {
+                        audio.clip = loserBackground;
+                    }
+                    audio.Play();
                 });
             });
 
@@ -657,6 +681,8 @@ namespace Project.Networking {
                         break;
 
                     case "sandStorm":
+                        Camera.main.GetComponent<AudioSource>().clip = sandStormBackground;
+                        Camera.main.GetComponent<AudioSource>().Play();
                         D2FogsPE sandStormEffect = Camera.main.GetComponent<D2FogsPE>();
                         sandStormEffect.enabled = true;
                         if (serverObjects[ClientID].GetNiTeam() == team) {
@@ -714,6 +740,7 @@ namespace Project.Networking {
             // explode animation
             GameObject explodeGO = Instantiate(networkPrefabs.explosionSafeBox, explodeSafeBoxContainer);
             serverObjects[safeBoxID].GetComponent<SpriteRenderer>().sprite = deadSafeBox;
+            cameraForMoving.GetComponent<AudioSource>().Play();
             yield return new WaitForSeconds(1);
             Destroy(explodeGO);
         }
@@ -733,6 +760,8 @@ namespace Project.Networking {
                 }
                 else {
                     sandStormEffect.enabled = false;
+                    Camera.main.GetComponent<AudioSource>().clip = battleBackground;
+                    Camera.main.GetComponent<AudioSource>().Play();
                 }
             }
         }

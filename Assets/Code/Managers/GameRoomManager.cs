@@ -18,6 +18,9 @@ namespace Project.Managers {
         private Color color;
 
         [SerializeField]
+        private Button returnButton;
+
+        [SerializeField]
         private Text readyOrNot;
         [SerializeField]
         private GameObject readyPrefab;
@@ -93,6 +96,7 @@ namespace Project.Managers {
         }
 
         void Start() {
+            returnButton.GetComponent<AudioSource>().Play();
             roomID.text = NetworkClient.RoomID.ToString();
             prefabsToDelete = new List<GameObject>();
             color = new Color();
@@ -203,17 +207,20 @@ namespace Project.Managers {
         }
 
         public void PressBlueTeam() {
+            returnButton.GetComponent<AudioSource>().Play();
             JSONObject j = new JSONObject();
             j.AddField("team", "blue");
             SocketReference.Emit("switchTeam", j);
         }
         public void PressOrangeTeam() {
+            returnButton.GetComponent<AudioSource>().Play();
             JSONObject j = new JSONObject();
             j.AddField("team", "orange");
             SocketReference.Emit("switchTeam", j);
         }
 
         public void PressReady() {
+            returnButton.GetComponent<AudioSource>().Play();
             SocketReference.Emit("switchReady");
             UserInGameRoom me = NetworkClient.usersInGameRoom[NetworkClient.ClientID];
             if (me.ready) {
@@ -224,6 +231,7 @@ namespace Project.Managers {
         }
 
         public void PressSelectLeft() {
+            returnButton.GetComponent<AudioSource>().Play();
             UserInGameRoom me = NetworkClient.usersInGameRoom[NetworkClient.ClientID];
             if (!me.ready) {
                 JSONObject j = new JSONObject();
@@ -233,6 +241,7 @@ namespace Project.Managers {
         }
 
         public void PressSelectRight() {
+            returnButton.GetComponent<AudioSource>().Play();
             UserInGameRoom me = NetworkClient.usersInGameRoom[NetworkClient.ClientID];
             if (!me.ready) {
                 JSONObject j = new JSONObject();

@@ -65,6 +65,10 @@ namespace Project.Managers {
             }
         }
 
+        void Start() {
+            showdownButton.GetComponent<AudioSource>().Play();
+        }
+
         void Update() {
             capacity = inputField.text;
 
@@ -155,6 +159,8 @@ namespace Project.Managers {
             showdownButton.image.color = color;
             ColorUtility.TryParseHtmlString("#FF8C69", out color);
             heistButton.image.color = color;
+
+            showdownButton.GetComponent<AudioSource>().Play();
         }
 
         public void PressHeistButton() {
@@ -164,6 +170,8 @@ namespace Project.Managers {
             showdownButton.image.color = color;
             ColorUtility.TryParseHtmlString("#F8FD00", out color);
             heistButton.image.color = color;
+
+            showdownButton.GetComponent<AudioSource>().Play();
         }
 
         public void PressCreateButton() {
@@ -176,9 +184,13 @@ namespace Project.Managers {
                     SocketReference.Emit("createGameRoom", new JSONObject(JsonUtility.ToJson(gameSettings)));
                 }
             }
+
+            showdownButton.GetComponent<AudioSource>().Play();
         }
 
         public void EnterGameRoom1() {
+            AudioSource audio = showdownButton.GetComponent<AudioSource>();
+            audio.Play();
             if (GameRoomID_1.text == "") { return; }
             int id = int.Parse(GameRoomID_1.text);
             if (!NetworkClient.gameRoomsInfo[id].playing && NetworkClient.gameRoomsInfo[id].player_num < NetworkClient.gameRoomsInfo[id].maxPlayers) {
@@ -189,6 +201,7 @@ namespace Project.Managers {
         }
 
         public void EnterGameRoom2() {
+            showdownButton.GetComponent<AudioSource>().Play();
             if (GameRoomID_2.text == "") { return; }
             int id = int.Parse(GameRoomID_2.text);
             if (!NetworkClient.gameRoomsInfo[id].playing && NetworkClient.gameRoomsInfo[id].player_num < NetworkClient.gameRoomsInfo[id].maxPlayers) {
@@ -199,6 +212,7 @@ namespace Project.Managers {
         }
 
         public void EnterGameRoom3() {
+            showdownButton.GetComponent<AudioSource>().Play();
             if (GameRoomID_3.text == "") { return; }
             int id = int.Parse(GameRoomID_3.text);
             if (!NetworkClient.gameRoomsInfo[id].playing && NetworkClient.gameRoomsInfo[id].player_num < NetworkClient.gameRoomsInfo[id].maxPlayers) {
@@ -209,6 +223,7 @@ namespace Project.Managers {
         }
 
         public void EnterGameRoom4() {
+            showdownButton.GetComponent<AudioSource>().Play();
             if (GameRoomID_4.text == "") { return; }
             int id = int.Parse(GameRoomID_4.text);
             if (!NetworkClient.gameRoomsInfo[id].playing && NetworkClient.gameRoomsInfo[id].player_num < NetworkClient.gameRoomsInfo[id].maxPlayers) {
