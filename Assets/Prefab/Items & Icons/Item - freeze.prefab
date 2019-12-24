@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6238491361529085646}
   - component: {fileID: 3276954855252330918}
   - component: {fileID: 8340143140538853957}
+  - component: {fileID: 4381719978796265787}
   m_Layer: 0
   m_Name: Item - freeze
   m_TagString: Untagged
@@ -4963,6 +4964,20 @@ MonoBehaviour:
   guideArrow: {fileID: 0}
   explosionSafeBox: {fileID: 0}
   superItems: []
+--- !u!114 &4381719978796265787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6646382088788007409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56cfa11b9cc91f14488a9d0862817527, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  networkIdentity: {fileID: 3276954855252330918}
+  superID: 0
 --- !u!1 &6646796414374738675
 GameObject:
   m_ObjectHideFlags: 0

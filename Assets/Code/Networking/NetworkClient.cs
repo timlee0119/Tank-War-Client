@@ -448,20 +448,13 @@ namespace Project.Networking {
                         portal2.GetComponent<PortalCollision>().pairedPortalID = id;
                     }
                     else if (name == "Item") {
-                        // if serverObjects contains other item, destroy it.
-                        foreach (KeyValuePair<string, NetworkIdentity> item in serverObjects) {
-                            if (item.Value.GetNiType() == "Item") {
-                                Destroy(item.Value.gameObject);
-                                serverObjects.Remove(item.Key);
-                                break;
-                            }
-                        }
-
                         int super = E.data["super"].i();
                         GameObject go = Instantiate(networkPrefabs.superItems[super], itemSpawnContainer);
                         ni = go.GetComponent<NetworkIdentity>();
                         ni.SetSocketReference(this);
                         ni.SetNiType("Item");
+                        ni.SetControllerID(id);
+                        go.GetComponent<SuperItemCollision>().superID = super;
                         serverObjects.Add(id, ni);
                     }
                     else {
