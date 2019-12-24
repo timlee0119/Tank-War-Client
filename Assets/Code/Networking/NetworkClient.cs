@@ -627,7 +627,7 @@ namespace Project.Networking {
                         break;
 
                     case "lightShield":
-                        effectPrefab = Instantiate(networkPrefabs.superLightShield, serverObjects[ClientID].transform);
+                        effectPrefab = Instantiate(networkPrefabs.superLightShield, serverObjects[id].transform);
                         specialStatus[id].Add(new KeyValuePair<string, GameObject>("lightShield", effectPrefab));
                         StartCoroutine(removeStatusWaiter(6, id, "lightShield"));
                         break;
