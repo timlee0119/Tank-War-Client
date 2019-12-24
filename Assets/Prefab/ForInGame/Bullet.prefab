@@ -143,8 +143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkIdentity: {fileID: 114244692520133818}
-  bulletDestroyBackground: {fileID: 8300000, guid: fb56d1adef7654068b13f98e05a4e91a,
-    type: 3}
+  gotHitBackground: {fileID: 8300000, guid: fb56d1adef7654068b13f98e05a4e91a, type: 3}
 --- !u!114 &6438255327969209648
 MonoBehaviour:
   m_ObjectHideFlags: 0

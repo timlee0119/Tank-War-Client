@@ -58,6 +58,8 @@ namespace Project.Networking {
         [SerializeField]
         private GameObject gotHitPlayer;
         [SerializeField]
+        private GameObject respawnPlayer;
+        [SerializeField]
         private GameObject tombstone;
 
         public static string ClientID { get; private set; }
@@ -536,6 +538,8 @@ namespace Project.Networking {
 
                 Destroy(tombstoneList[id]);
                 tombstoneList.Remove(id);
+
+                respawnPlayer.GetComponent<AudioSource>().Play();
 
                 NetworkIdentity ni = serverObjects[id];
                 ni.transform.position = positionIDToContainer[E.data["startPosition"].i()].position;

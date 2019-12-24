@@ -245,10 +245,14 @@ MonoBehaviour:
   mp: 0
   tankID: 0
   passiveSkill: 
-  super: 
+  supers: 
   barrelPivot: {fileID: 6656928806213451500}
   networkIdentity: {fileID: 6656928807335471058}
   bulletSpawnPoint: {fileID: 3109216260093948929}
+  obtainSuperBackground: {fileID: 8300000, guid: 3791440334cd843e788fc1278056af9d,
+    type: 3}
+  switchSuperBackground: {fileID: 8300000, guid: d0d0ef23ecd0140f392c3678b432d148,
+    type: 3}
 --- !u!58 &6656928807335471054
 CircleCollider2D:
   m_ObjectHideFlags: 0
