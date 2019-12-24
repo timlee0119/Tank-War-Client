@@ -55,6 +55,10 @@ namespace Project.Networking {
         private AudioClip loserBackground;
         [SerializeField]
         private AudioClip sandStormBackground;
+        [SerializeField]
+        private GameObject gotHitPlayer;
+        [SerializeField]
+        private GameObject tombstone;
 
         public static string ClientID { get; private set; }
         public static int RoomID { get; private set; }
@@ -75,6 +79,8 @@ namespace Project.Networking {
         public static Dictionary<string, List<KeyValuePair<string, GameObject>>> specialStatus;
 
         private List<string> sandStormStatus;
+
+        private Dictionary<string, GameObject> tombstoneList;
 
         // Use this for initialization
         public override void Start() {
@@ -109,6 +115,7 @@ namespace Project.Networking {
             playerIDtoStatusBarIndex = new Dictionary<string, int>();
             specialStatus = new Dictionary<string, List<KeyValuePair<string, GameObject>>>();
             sandStormStatus = new List<string>();
+            tombstoneList = new Dictionary<string, GameObject>();
         }
 
         private void setupEvents() {
@@ -478,6 +485,9 @@ namespace Project.Networking {
                 PlayerManager pm = ni.GetComponent<PlayerManager>();
                 // update my UI Canvas health bar
                 if (id == ClientID) {
+                    if (health < pm.getHealth()) {
+                        gotHitPlayer.GetComponent<AudioSource>().Play();
+                    }
                     pm.setHealth(health);
                     InGameUIManager.Instance.updateHealthBar(pm.getFullHealth(), health);
                 }
@@ -508,6 +518,13 @@ namespace Project.Networking {
                 // clear all special status
                 RemoveSpecialStatus.removeAllStatus(id, this);
 
+                GameObject go = Instantiate(tombstone, outSideContainer);
+                go.transform.position = ni.transform.position;
+                if (serverObjects[ClientID].GetNiTeam() == "orange") {
+                    go.transform.eulerAngles = new Vector3(0, 0, 180);
+                }
+                tombstoneList.Add(id, go);
+
                 // hide status bar
                 if (id != ClientID) {
                     InGameUIManager.Instance.toggleStatusBar(playerIDtoStatusBarIndex[id]);
@@ -516,6 +533,10 @@ namespace Project.Networking {
 
             On("playerRespawn", (E) => {
                 string id = E.data["id"].RemoveQuotes();
+
+                Destroy(tombstoneList[id]);
+                tombstoneList.Remove(id);
+
                 NetworkIdentity ni = serverObjects[id];
                 ni.transform.position = positionIDToContainer[E.data["startPosition"].i()].position;
                 ni.gameObject.SetActive(true);
@@ -596,6 +617,11 @@ namespace Project.Networking {
                 // clean sand storm
                 Camera.main.GetComponent<D2FogsPE>().enabled = false;
                 sandStormStatus.Clear();
+                // clean tombstone
+                foreach (KeyValuePair<string, GameObject> item in tombstoneList) {
+                    Destroy(item.Value);
+                }
+                tombstoneList.Clear();
 
                 Debug.Log("Switching to GameOver");
                 SceneManagementManager.Instance.LoadLevel(SceneList.GAMEOVER, (levelName) => {
