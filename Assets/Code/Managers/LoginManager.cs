@@ -12,6 +12,12 @@ namespace Project.Managers {
 
         [SerializeField]
         public InputField inputField;
+        [SerializeField]
+        private Image howToPlay;
+        [SerializeField]
+        private Image btnImg;
+        [SerializeField]
+        private Text btnText;
 
         private SocketIOComponent socketReference;
 
@@ -23,7 +29,6 @@ namespace Project.Managers {
 
         public void Start() {
             inputField.interactable = false;
-
             SceneManagementManager.Instance.LoadLevel(SceneList.ONLINE, (levelName) => {
                 inputField.interactable = true;
             });
@@ -37,6 +42,18 @@ namespace Project.Managers {
                 //SocketReference.Emit("joinGame", new JSONObject(JsonUtility.ToJson(userData)));
                 inputField.text = "";
             }
+        }
+
+        public void PressHowToPlay() {
+            howToPlay.enabled = true;
+            btnImg.enabled = true;
+            btnText.enabled = true;
+        }
+
+        public void PressClose() {
+            howToPlay.enabled = false;
+            btnImg.enabled = false;
+            btnText.enabled = false;
         }
     }
 

@@ -70,6 +70,11 @@ namespace Project.Managers {
         [SerializeField]
         private Transform orangeTeamContainer_3;
 
+        [SerializeField]
+        private GameObject TankDescription;
+        [SerializeField]
+        private Sprite[] TankDescriptionSprites;
+
         private SocketIOComponent socketReference;
 
         // map tmpBlue/Orange to position
@@ -198,6 +203,9 @@ namespace Project.Managers {
                     bigtank.transform.localScale = new Vector3(120, 120, 1);
                     bigtank.transform.position -= new Vector3(0, 5 * canvasScale, 0);
                     prefabsToDelete.Add(bigtank);
+
+                    // update tank descriptions
+                    TankDescription.GetComponent<SpriteRenderer>().sprite = TankDescriptionSprites[player.tank];
                 }
             }
         }
@@ -247,6 +255,13 @@ namespace Project.Managers {
             SceneManagementManager.Instance.LoadLevel(SceneList.LOBBY, (levelName) => {
                 SceneManagementManager.Instance.UnLoadLevel(SceneList.GAMEROOM);
             });
+        }
+
+        public void PressAttributes() {
+            SpriteRenderer s = TankDescription.GetComponent<SpriteRenderer>();
+            var tempColor = s.color;
+            tempColor.a = (tempColor.a + 1) % 2;
+            s.color = tempColor;
         }
     }
 }
