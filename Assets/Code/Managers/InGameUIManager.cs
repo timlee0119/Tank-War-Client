@@ -72,6 +72,8 @@ namespace Project.Managers {
         private GameObject OrangeSafeBoxHealthPosition;
         [SerializeField]
         private Image OrangeSafeBoxHealth;
+        [SerializeField]
+        private Text Time;
 
         private float blueEnemyStatusXOffset = 0.7f;
         private float blueEnemyStatusYOffset = -0.9f;
@@ -306,6 +308,10 @@ namespace Project.Managers {
             else {
                 Debug.LogError("undefined team");
             }
+        }
+
+        public void setTime(string time) {
+            this.Time.text = time;
         }
     }
 }

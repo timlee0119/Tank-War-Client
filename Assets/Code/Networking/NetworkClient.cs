@@ -270,7 +270,8 @@ namespace Project.Networking {
             });
 
             On("updateTime", (E) => {
-                // todo
+                string time = E.data["time"].str;
+                InGameUIManager.Instance.setTime(time);
             });
 
             On("spawnPlayers", (E) => {
