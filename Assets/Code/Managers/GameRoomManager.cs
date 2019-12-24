@@ -235,6 +235,10 @@ namespace Project.Managers {
                 readyOrNot.text = "READY";
             } else {
                 readyOrNot.text = "CANCEL";
+                SpriteRenderer s = TankDescription.GetComponent<SpriteRenderer>();
+                var tempColor = s.color;
+                tempColor.a = 0f;
+                s.color = tempColor;
             }
         }
 
@@ -268,10 +272,13 @@ namespace Project.Managers {
 
         public void PressAttributes() {
             returnButton.GetComponent<AudioSource>().Play();
-            SpriteRenderer s = TankDescription.GetComponent<SpriteRenderer>();
-            var tempColor = s.color;
-            tempColor.a = (tempColor.a + 1) % 2;
-            s.color = tempColor;
+            UserInGameRoom me = NetworkClient.usersInGameRoom[NetworkClient.ClientID];
+            if (!me.ready) {
+                SpriteRenderer s = TankDescription.GetComponent<SpriteRenderer>();
+                var tempColor = s.color;
+                tempColor.a = (tempColor.a + 1) % 2;
+                s.color = tempColor;
+            }
         }
     }
 }

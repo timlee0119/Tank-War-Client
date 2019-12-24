@@ -534,12 +534,15 @@ namespace Project.Networking {
             });
 
             On("playerRespawn", (E) => {
+                Debug.Log("respawn");
                 string id = E.data["id"].RemoveQuotes();
 
                 Destroy(tombstoneList[id]);
                 tombstoneList.Remove(id);
 
                 respawnPlayer.GetComponent<AudioSource>().Play();
+
+                Debug.Log("respawn");
 
                 NetworkIdentity ni = serverObjects[id];
                 ni.transform.position = positionIDToContainer[E.data["startPosition"].i()].position;

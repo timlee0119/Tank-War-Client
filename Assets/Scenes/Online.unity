@@ -640,7 +640,7 @@ MonoBehaviour:
   loserBackground: {fileID: 8300000, guid: 5bc637ccc1c3a4fdc892a74833870905, type: 3}
   sandStormBackground: {fileID: 8300000, guid: 02e3f18e9624e4fc192cf4d8e084b0ed, type: 3}
   gotHitPlayer: {fileID: 1304225103}
-  respawnPlayer: {fileID: 0}
+  respawnPlayer: {fileID: 1234323512}
   tombstone: {fileID: 605973789303910705, guid: 2d04a8a7dddeb4f088adf719c768ba1b,
     type: 3}
 --- !u!4 &1386882646
