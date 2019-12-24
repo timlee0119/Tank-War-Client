@@ -60,8 +60,10 @@ namespace Project.Player {
             bulletData.position = new Position();
             bulletData.direction = new Position();
             supers = new int[2] { tankID, -1 };
-            InGameUIManager.Instance.setSuperSprite(0, tankID);
-            InGameUIManager.Instance.focusSuper(0);
+            if (this.GetComponent<NetworkIdentity>().GetID() == NetworkClient.ClientID) {
+                InGameUIManager.Instance.setSuperSprite(0, tankID);
+                InGameUIManager.Instance.focusSuper(0);
+            }
         }
 
         public void Update() {
