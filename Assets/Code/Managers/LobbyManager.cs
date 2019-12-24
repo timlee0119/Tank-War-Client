@@ -123,28 +123,28 @@ namespace Project.Managers {
                 GameRoomID_4.text = "";
                 GameMode_4.text = "";
                 Status_4.text = "";
-                Empty_4.text = "Empty...";
+                Empty_4.text = "Empty";
             }
 
             if (count < 3) {
                 GameRoomID_3.text = "";
                 GameMode_3.text = "";
                 Status_3.text = "";
-                Empty_3.text = "Empty...";
+                Empty_3.text = "Empty";
             }
 
             if (count < 2) {
                 GameRoomID_2.text = "";
                 GameMode_2.text = "";
                 Status_2.text = "";
-                Empty_2.text = "Empty...";
+                Empty_2.text = "Empty";
             }
 
             if (count < 1) {
                 GameRoomID_1.text = "";
                 GameMode_1.text = "";
                 Status_1.text = "";
-                Empty_1.text = "Empty...";
+                Empty_1.text = "Empty";
             }
         }
 
@@ -153,14 +153,14 @@ namespace Project.Managers {
             Color color = new Color();
             ColorUtility.TryParseHtmlString("#F8FD00", out color);
             showdownButton.image.color = color;
-            ColorUtility.TryParseHtmlString("#EED6FB", out color);
+            ColorUtility.TryParseHtmlString("#FF8C69", out color);
             heistButton.image.color = color;
         }
 
         public void PressHeistButton() {
             gameMode = "Heist";
             Color color = new Color();
-            ColorUtility.TryParseHtmlString("#EED6FB", out color);
+            ColorUtility.TryParseHtmlString("#FF8C69", out color);
             showdownButton.image.color = color;
             ColorUtility.TryParseHtmlString("#F8FD00", out color);
             heistButton.image.color = color;
