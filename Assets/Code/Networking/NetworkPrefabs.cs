@@ -20,5 +20,6 @@ namespace Project.Networking {
         public GameObject aimingLine;
         public GameObject guideArrow;
         public GameObject explosionSafeBox;
+        public GameObject[] superItems;
     }
 }

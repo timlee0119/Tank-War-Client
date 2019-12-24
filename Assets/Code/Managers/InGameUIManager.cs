@@ -248,8 +248,17 @@ namespace Project.Managers {
             }
         }
 
-        public void updateStatusBarUsername(int index, string username) {
+        public void updateStatusBarUsername(int index, string username, string team) {
+            Color color = new Color();
+            if (team == "blue") {
+                ColorUtility.TryParseHtmlString("#0053FF", out color);
+            }
+            else {
+                ColorUtility.TryParseHtmlString("#FF5F00", out color);
+            }
             usernameList[index].text = username;
+            usernameList[index].color = color;
+            usernameList[index].fontStyle = FontStyle.Bold;
         }
 
         public void updateStatusBarHealth(int index, float fullHealth, float health) {

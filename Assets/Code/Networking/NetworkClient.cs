@@ -35,6 +35,8 @@ namespace Project.Networking {
         [SerializeField]
         private Transform outSideContainer;
         [SerializeField]
+        private Transform itemSpawnContainer;
+        [SerializeField]
         private ServerObjects serverSpawnables;
         [SerializeField]
         private NetworkPrefabs networkPrefabs;
@@ -325,7 +327,7 @@ namespace Project.Networking {
                     // update other players' status bar username
                     if (id != ClientID) {
                         InGameUIManager.Instance.toggleStatusBar(i);
-                        InGameUIManager.Instance.updateStatusBarUsername(i, go.name);
+                        InGameUIManager.Instance.updateStatusBarUsername(i, go.name, team);
                     }
                 }
 
@@ -428,6 +430,23 @@ namespace Project.Networking {
                         // set portal pair
                         portal.GetComponent<PortalCollision>().pairedPortalID = id2;
                         portal2.GetComponent<PortalCollision>().pairedPortalID = id;
+                    }
+                    else if (name == "Item") {
+                        // if serverObjects contains other item, destroy it.
+                        foreach (KeyValuePair<string, NetworkIdentity> item in serverObjects) {
+                            if (item.Value.GetNiType() == "Item") {
+                                Destroy(item.Value.gameObject);
+                                serverObjects.Remove(item.Key);
+                                break;
+                            }
+                        }
+
+                        int super = E.data["super"].i();
+                        GameObject go = Instantiate(networkPrefabs.superItems[super], itemSpawnContainer);
+                        ni = go.GetComponent<NetworkIdentity>();
+                        ni.SetSocketReference(this);
+                        ni.SetNiType("Item");
+                        serverObjects.Add(id, ni);
                     }
                     else {
                         Debug.LogError("undefined object name");
