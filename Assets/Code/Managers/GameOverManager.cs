@@ -11,6 +11,8 @@ namespace Project.Managers {
 
     public class GameOverManager : MonoBehaviour {
         [SerializeField]
+        AudioClip menuBackground;
+        [SerializeField]
         private Transform[] winnerPositions;
         [SerializeField]
         private Text[] winnerNames;
@@ -52,6 +54,9 @@ namespace Project.Managers {
         }
 
         public void backToGameRoom() {
+            AudioSource audio = Camera.main.GetComponent<AudioSource>();
+            audio.clip = menuBackground;
+            audio.Play();
             SceneManagementManager.Instance.LoadLevel(SceneList.GAMEROOM, (levelName) => {
                 SocketReference.Emit("finishPlaying");
                 SceneManagementManager.Instance.UnLoadLevel(SceneList.GAMEOVER);

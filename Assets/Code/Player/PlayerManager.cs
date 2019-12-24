@@ -53,6 +53,11 @@ namespace Project.Player {
         private BulletData bulletData;
         private Cooldown shootingCooldown;
 
+        [SerializeField]
+        private AudioClip obtainSuperBackground;
+        [SerializeField]
+        private AudioClip switchSuperBackground;
+
         public void Start() {
             camTrans = Camera.main.GetComponent<Transform>();
             shootingCooldown = new Cooldown(0.5f);
@@ -160,6 +165,8 @@ namespace Project.Player {
         }
 
         public void setObtainedSuper(int superID) {
+            this.GetComponent<AudioSource>().clip = obtainSuperBackground;
+            this.GetComponent<AudioSource>().Play();
             Debug.Log("Set obtained super to " + superID.ToString());
             supers[1] = superID;
             InGameUIManager.Instance.setSuperSprite(1, superID);
@@ -167,6 +174,8 @@ namespace Project.Player {
 
         private void checkSwitchSuper() {
             if (Input.GetMouseButtonUp(1) && supers[1] != -1) {
+                this.GetComponent<AudioSource>().clip = switchSuperBackground;
+                this.GetComponent<AudioSource>().Play();
                 currentSuper = (currentSuper + 1) % 2;
                 InGameUIManager.Instance.focusSuper(currentSuper);
                 Debug.Log(string.Format("Switch super to {0}", supers[currentSuper]));

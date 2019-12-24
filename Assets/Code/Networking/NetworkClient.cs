@@ -45,6 +45,23 @@ namespace Project.Networking {
         [SerializeField]
         private Camera cameraForMoving;
 
+        [SerializeField]
+        private AudioClip menuBackground;
+        [SerializeField]
+        private AudioClip battleBackground;
+        [SerializeField]
+        private AudioClip winnerBackground;
+        [SerializeField]
+        private AudioClip loserBackground;
+        [SerializeField]
+        private AudioClip sandStormBackground;
+        [SerializeField]
+        private GameObject gotHitPlayer;
+        [SerializeField]
+        private GameObject respawnPlayer;
+        [SerializeField]
+        private GameObject tombstone;
+
         public static string ClientID { get; private set; }
         public static int RoomID { get; private set; }
         public static Dictionary<string, UserInGameRoom> usersInGameRoom { get; private set; }
@@ -64,6 +81,8 @@ namespace Project.Networking {
         public static Dictionary<string, List<KeyValuePair<string, GameObject>>> specialStatus;
 
         private List<string> sandStormStatus;
+
+        private Dictionary<string, GameObject> tombstoneList;
 
         // Use this for initialization
         public override void Start() {
@@ -98,6 +117,7 @@ namespace Project.Networking {
             playerIDtoStatusBarIndex = new Dictionary<string, int>();
             specialStatus = new Dictionary<string, List<KeyValuePair<string, GameObject>>>();
             sandStormStatus = new List<string>();
+            tombstoneList = new Dictionary<string, GameObject>();
         }
 
         private void setupEvents() {
@@ -242,6 +262,11 @@ namespace Project.Networking {
             });
 
             On("gameStart", (E) => {
+                // switch background music
+                AudioSource audio = Camera.main.GetComponent<AudioSource>();
+                audio.clip = battleBackground;
+                audio.Play();
+
                 string mode = E.data["gameMode"].RemoveQuotes();
                 currentGameMode = mode;
                 if (mode == "Heist") {
@@ -462,6 +487,9 @@ namespace Project.Networking {
                 PlayerManager pm = ni.GetComponent<PlayerManager>();
                 // update my UI Canvas health bar
                 if (id == ClientID) {
+                    if (health < pm.getHealth()) {
+                        gotHitPlayer.GetComponent<AudioSource>().Play();
+                    }
                     pm.setHealth(health);
                     InGameUIManager.Instance.updateHealthBar(pm.getFullHealth(), health);
                 }
@@ -492,6 +520,13 @@ namespace Project.Networking {
                 // clear all special status
                 RemoveSpecialStatus.removeAllStatus(id, this);
 
+                GameObject go = Instantiate(tombstone, outSideContainer);
+                go.transform.position = ni.transform.position;
+                if (serverObjects[ClientID].GetNiTeam() == "orange") {
+                    go.transform.eulerAngles = new Vector3(0, 0, 180);
+                }
+                tombstoneList.Add(id, go);
+
                 // hide status bar
                 if (id != ClientID) {
                     InGameUIManager.Instance.toggleStatusBar(playerIDtoStatusBarIndex[id]);
@@ -500,6 +535,12 @@ namespace Project.Networking {
 
             On("playerRespawn", (E) => {
                 string id = E.data["id"].RemoveQuotes();
+
+                Destroy(tombstoneList[id]);
+                tombstoneList.Remove(id);
+
+                respawnPlayer.GetComponent<AudioSource>().Play();
+
                 NetworkIdentity ni = serverObjects[id];
                 ni.transform.position = positionIDToContainer[E.data["startPosition"].i()].position;
                 ni.gameObject.SetActive(true);
@@ -580,6 +621,11 @@ namespace Project.Networking {
                 // clean sand storm
                 Camera.main.GetComponent<D2FogsPE>().enabled = false;
                 sandStormStatus.Clear();
+                // clean tombstone
+                foreach (KeyValuePair<string, GameObject> item in tombstoneList) {
+                    Destroy(item.Value);
+                }
+                tombstoneList.Clear();
 
                 Debug.Log("Switching to GameOver");
                 SceneManagementManager.Instance.LoadLevel(SceneList.GAMEOVER, (levelName) => {
@@ -604,6 +650,14 @@ namespace Project.Networking {
                     else {
                         Debug.LogError("undefined current game mode");
                     }
+
+                    AudioSource audio = Camera.main.GetComponent<AudioSource>();
+                    if (serverObjects.ContainsKey(ClientID)) {
+                        audio.clip = winnerBackground;
+                    } else {
+                        audio.clip = loserBackground;
+                    }
+                    audio.Play();
                 });
             });
 
@@ -650,6 +704,8 @@ namespace Project.Networking {
                         break;
 
                     case "sandStorm":
+                        Camera.main.GetComponent<AudioSource>().clip = sandStormBackground;
+                        Camera.main.GetComponent<AudioSource>().Play();
                         D2FogsPE sandStormEffect = Camera.main.GetComponent<D2FogsPE>();
                         sandStormEffect.enabled = true;
                         if (serverObjects[ClientID].GetNiTeam() == team) {
@@ -707,6 +763,7 @@ namespace Project.Networking {
             // explode animation
             GameObject explodeGO = Instantiate(networkPrefabs.explosionSafeBox, explodeSafeBoxContainer);
             serverObjects[safeBoxID].GetComponent<SpriteRenderer>().sprite = deadSafeBox;
+            cameraForMoving.GetComponent<AudioSource>().Play();
             yield return new WaitForSeconds(1);
             Destroy(explodeGO);
         }
@@ -726,6 +783,8 @@ namespace Project.Networking {
                 }
                 else {
                     sandStormEffect.enabled = false;
+                    Camera.main.GetComponent<AudioSource>().clip = battleBackground;
+                    Camera.main.GetComponent<AudioSource>().Play();
                 }
             }
         }

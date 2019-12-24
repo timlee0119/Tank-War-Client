@@ -10,9 +10,14 @@ namespace Project.Gameplay {
 
         public string pairedPortalID;
 
+        [SerializeField]
+        AudioClip teleport;
+
         public void OnCollisionEnter2D(Collision2D collision) {
             NetworkIdentity ni = collision.gameObject.GetComponent<NetworkIdentity>();
             if (ni.GetID() == NetworkClient.ClientID && ni.GetNiTeam() == networkIdentity.GetNiTeam()) {
+                this.GetComponent<AudioSource>().clip = teleport;
+                this.GetComponent<AudioSource>().Play();
                 float xOffset = transform.position.x - ni.transform.position.x;
                 float yOffset = transform.position.y - ni.transform.position.y;
                 ni.transform.position = new Vector3(

@@ -9,6 +9,9 @@ namespace Project.Gameplay {
         [SerializeField]
         GameObject explosionFireBall;
 
+        [SerializeField]
+        AudioClip fireballExplosionBackground;
+
         private SocketIOComponent socketReference;
         public void setSocket(SocketIOComponent s) { socketReference = s; }
 
@@ -39,6 +42,9 @@ namespace Project.Gameplay {
             }
 
             if (destroy) {
+                this.GetComponent<AudioSource>().clip = fireballExplosionBackground;
+                this.GetComponent<AudioSource>().Play();
+
                 GameObject explosion = Instantiate(explosionFireBall);
                 explosion.transform.position = transform.position;
                 transform.position = new Vector3(1000, 1000, 0);

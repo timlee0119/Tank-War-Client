@@ -11,6 +11,9 @@ namespace Project.Gameplay {
         private NetworkIdentity networkIdentity;
         private string activator;
 
+        [SerializeField]
+        private AudioClip gotHitBackground;
+
         public void setActivator(string activator) { this.activator = activator; }
 
         public void OnCollisionEnter2D(Collision2D collision) {
@@ -30,6 +33,10 @@ namespace Project.Gameplay {
                 string hitObjectType = (ni == null) ? "" : ni.GetNiType();
                 j.AddField("hitObjectType", hitObjectType);
 
+                if (ni != null && ni.GetNiType() == "Tank") {
+                    ni.GetComponent<AudioSource>().clip = gotHitBackground;
+                    ni.GetComponent<AudioSource>().Play();
+                }
                 networkIdentity.GetSocket().Emit("collisionDestroy", j);
             }
         }

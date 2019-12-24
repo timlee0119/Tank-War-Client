@@ -257,6 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad6c90473006f774fa6eb03b9d496e41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  menuBackground: {fileID: 8300000, guid: 0263729a658754bd5a9f08fa470dc42d, type: 3}
   winnerPositions:
   - {fileID: 1682270535}
   - {fileID: 1529189076}
