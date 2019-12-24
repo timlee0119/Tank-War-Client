@@ -73,6 +73,10 @@ namespace Project.Managers {
         [SerializeField]
         private Image OrangeSafeBoxHealth;
         [SerializeField]
+        private GameObject[] SuperPositions;
+        [SerializeField]
+        private Sprite[] SuperSprites;
+        [SerializeField]
         private Text Time;
 
         private float blueEnemyStatusXOffset = 0.7f;
@@ -191,6 +195,7 @@ namespace Project.Managers {
             for (int i = 0; i < healthBarList.Count; ++i) {
                 updateStatusBarHealth(i, 1, 1);
             }
+            resetSuperSprite();
         }
 
         public void activateGameUICanvas() {
@@ -316,6 +321,28 @@ namespace Project.Managers {
             }
             else {
                 Debug.LogError("undefined team");
+            }
+        }
+
+        public void setSuperSprite(int index, int superID) {
+            SuperPositions[index].GetComponent<SpriteRenderer>().sprite = SuperSprites[superID];
+        }
+
+        public void focusSuper(int focus) {
+            SpriteRenderer s = SuperPositions[focus].GetComponent<SpriteRenderer>();
+            var tempColor = s.color;
+            tempColor.a = 1f;
+            s.color = tempColor;
+            int unfocus = (focus + 1) % 2;
+            s = SuperPositions[unfocus].GetComponent<SpriteRenderer>();
+            tempColor = s.color;
+            tempColor.a = 0.5f;
+            s.color = tempColor;
+        }
+
+        private void resetSuperSprite() {
+            for (int i = 0; i < SuperPositions.Length; ++i) {
+                SuperPositions[i].GetComponent<SpriteRenderer>().sprite = null;
             }
         }
 

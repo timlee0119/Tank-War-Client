@@ -446,6 +446,8 @@ namespace Project.Networking {
                         ni = go.GetComponent<NetworkIdentity>();
                         ni.SetSocketReference(this);
                         ni.SetNiType("Item");
+                        ni.SetControllerID(id);
+                        go.GetComponent<SuperItemCollision>().superID = super;
                         serverObjects.Add(id, ni);
                     }
                     else {

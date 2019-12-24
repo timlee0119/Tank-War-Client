@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 982442939912463968}
   - component: {fileID: -2715342371630264888}
   - component: {fileID: 1155049143710569915}
+  - component: {fileID: 2859040443124322836}
   m_Layer: 0
   m_Name: Item - lifeTree
   m_TagString: Untagged
@@ -4963,6 +4964,19 @@ MonoBehaviour:
   guideArrow: {fileID: 0}
   explosionSafeBox: {fileID: 0}
   superItems: []
+--- !u!114 &2859040443124322836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1471897862672168180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56cfa11b9cc91f14488a9d0862817527, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  superID: 0
 --- !u!1 &1472387377491339906
 GameObject:
   m_ObjectHideFlags: 0

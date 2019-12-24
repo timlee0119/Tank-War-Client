@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Project.Networking;
 using Project.Utility;
+using Project.Managers;
 using UnityEngine;
 
 namespace Project.Player {
@@ -32,7 +33,8 @@ namespace Project.Player {
         [SerializeField]
         private string passiveSkill;
         [SerializeField]
-        private string super;
+        private int[] supers;   // 0: default super, 1: obtained super
+        private int currentSuper = 0;
 
         [Header("Object References")]
         [SerializeField]
@@ -57,6 +59,9 @@ namespace Project.Player {
             bulletData = new BulletData();
             bulletData.position = new Position();
             bulletData.direction = new Position();
+            supers = new int[2] { tankID, -1 };
+            InGameUIManager.Instance.setSuperSprite(0, tankID);
+            InGameUIManager.Instance.focusSuper(0);
         }
 
         public void Update() {
@@ -65,6 +70,7 @@ namespace Project.Player {
                 checkAiming();
                 checkShooting();
                 checkSuper();
+                checkSwitchSuper();
             }
         }
 
@@ -79,7 +85,7 @@ namespace Project.Player {
             mp = info["mp"].f;
             tankID = info["tank"].i();
             passiveSkill = info["passiveSkill"].RemoveQuotes();
-            super = info["super"].RemoveQuotes();
+            // super = info["super"].RemoveQuotes();
         }
 
         public string getTeam() { return this.team; }
@@ -146,8 +152,22 @@ namespace Project.Player {
                 Debug.Log("I want to cast super");
 
                 JSONObject j = new JSONObject();
-                j.AddField("id", networkIdentity.GetID());
+                j.AddField("superID", supers[currentSuper]);
                 networkIdentity.GetSocket().Emit("useSuper", j);
+            }
+        }
+
+        public void setObtainedSuper(int superID) {
+            Debug.Log("Set obtained super to " + superID.ToString());
+            supers[1] = superID;
+            InGameUIManager.Instance.setSuperSprite(1, superID);
+        }
+
+        private void checkSwitchSuper() {
+            if (Input.GetMouseButtonUp(1) && supers[1] != -1) {
+                currentSuper = (currentSuper + 1) % 2;
+                InGameUIManager.Instance.focusSuper(currentSuper);
+                Debug.Log(string.Format("Switch super to {0}", supers[currentSuper]));
             }
         }
     }
