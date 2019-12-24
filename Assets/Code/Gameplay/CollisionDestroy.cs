@@ -33,9 +33,9 @@ namespace Project.Gameplay {
                 string hitObjectType = (ni == null) ? "" : ni.GetNiType();
                 j.AddField("hitObjectType", hitObjectType);
 
-                if (ni != null && ni.GetNiType() == "Tank") {
-                    ni.GetComponent<AudioSource>().clip = gotHitBackground;
-                    ni.GetComponent<AudioSource>().Play();
+                if (ni == null || ni.GetNiType() == "Tank" || ni.GetNiType() == "SafeBox") {
+                    NetworkClient.serverObjects[NetworkClient.ClientID].GetComponent<AudioSource>().clip = gotHitBackground;
+                    NetworkClient.serverObjects[NetworkClient.ClientID].GetComponent<AudioSource>().Play();
                 }
                 networkIdentity.GetSocket().Emit("collisionDestroy", j);
             }

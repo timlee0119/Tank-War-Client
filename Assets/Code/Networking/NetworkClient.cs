@@ -600,9 +600,19 @@ namespace Project.Networking {
                 string winTeam = E.data["winTeam"].str;
                 Debug.Log(string.Format("Game over. Win team: {0}", winTeam));
 
+                AudioSource audio = Camera.main.GetComponent<AudioSource>();
+                if (serverObjects[ClientID].GetNiTeam() == winTeam) {
+                    audio.clip = winnerBackground;
+                }
+                else {
+                    audio.clip = loserBackground;
+                }
+                audio.Play();
+
                 // clean up
                 InGameUIManager.Instance.CleanUp();
                 playerIDtoStatusBarIndex.Clear();
+
                 List<string> keysToDelete = new List<string>();
                 // clean server objects
                 foreach (KeyValuePair<string, NetworkIdentity> item in serverObjects) {
@@ -650,14 +660,6 @@ namespace Project.Networking {
                     else {
                         Debug.LogError("undefined current game mode");
                     }
-
-                    AudioSource audio = Camera.main.GetComponent<AudioSource>();
-                    if (serverObjects.ContainsKey(ClientID)) {
-                        audio.clip = winnerBackground;
-                    } else {
-                        audio.clip = loserBackground;
-                    }
-                    audio.Play();
                 });
             });
 

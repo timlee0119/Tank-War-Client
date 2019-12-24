@@ -18,6 +18,8 @@ namespace Project.Managers {
         private Image btnImg;
         [SerializeField]
         private Text btnText;
+        [SerializeField]
+        private GameObject clickPlayer;
 
         private SocketIOComponent socketReference;
 
@@ -45,12 +47,14 @@ namespace Project.Managers {
         }
 
         public void PressHowToPlay() {
+            clickPlayer.GetComponent<AudioSource>().Play();
             howToPlay.enabled = true;
             btnImg.enabled = true;
             btnText.enabled = true;
         }
 
         public void PressClose() {
+            clickPlayer.GetComponent<AudioSource>().Play();
             howToPlay.enabled = false;
             btnImg.enabled = false;
             btnText.enabled = false;

@@ -267,6 +267,7 @@ namespace Project.Managers {
         }
 
         public void PressAttributes() {
+            returnButton.GetComponent<AudioSource>().Play();
             SpriteRenderer s = TankDescription.GetComponent<SpriteRenderer>();
             var tempColor = s.color;
             tempColor.a = (tempColor.a + 1) % 2;

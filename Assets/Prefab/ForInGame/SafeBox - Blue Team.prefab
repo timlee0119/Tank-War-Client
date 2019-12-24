@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -7307713123445387032}
   - component: {fileID: -8740418954643968104}
   m_Layer: 0
-  m_Name: Blue Team Safe Box
+  m_Name: SafeBox - Blue Team
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -129,6 +129,15 @@ MonoBehaviour:
   shadowTankPrefab: {fileID: 0}
   blueSafeBoxPrefab: {fileID: 0}
   orangeSafeBoxPrefab: {fileID: 0}
+  superFreeze: {fileID: 0}
+  superLifeTree: {fileID: 0}
+  superLightShield: {fileID: 0}
+  superPortal: {fileID: 0}
+  superFireBall: {fileID: 0}
+  aimingLine: {fileID: 0}
+  guideArrow: {fileID: 0}
+  explosionSafeBox: {fileID: 0}
+  superItems: []
 --- !u!114 &-8740418954643968104
 MonoBehaviour:
   m_ObjectHideFlags: 0
