@@ -263,11 +263,14 @@ namespace Project.Managers {
         }
 
         public void PressExit() {
-            SocketReference.Emit("switchToBaseLobby");
-            NetworkClient.usersInGameRoom.Clear();
-            SceneManagementManager.Instance.LoadLevel(SceneList.LOBBY, (levelName) => {
-                SceneManagementManager.Instance.UnLoadLevel(SceneList.GAMEROOM);
-            });
+            UserInGameRoom me = NetworkClient.usersInGameRoom[NetworkClient.ClientID];
+            if (!me.ready) {
+                SocketReference.Emit("switchToBaseLobby");
+                NetworkClient.usersInGameRoom.Clear();
+                SceneManagementManager.Instance.LoadLevel(SceneList.LOBBY, (levelName) => {
+                    SceneManagementManager.Instance.UnLoadLevel(SceneList.GAMEROOM);
+                });
+            }
         }
 
         public void PressAttributes() {

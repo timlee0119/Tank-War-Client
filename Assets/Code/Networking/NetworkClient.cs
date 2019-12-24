@@ -597,6 +597,9 @@ namespace Project.Networking {
                 cameraForMoving.enabled = true;
                 cameraForMoving.GetComponent<MoveAnimation>().SetDestination(explodeSafeBoxContainer.position, 1);
                 StartCoroutine(explodeWaiter(explodeSafeBoxContainer, explodeSafeBoxID));
+
+                // clean UI
+                InGameUIManager.Instance.CleanUp();
             });
 
             On("gameOver", (E) => {
@@ -613,7 +616,6 @@ namespace Project.Networking {
                 audio.Play();
 
                 // clean up
-                InGameUIManager.Instance.CleanUp();
                 playerIDtoStatusBarIndex.Clear();
 
                 List<string> keysToDelete = new List<string>();
