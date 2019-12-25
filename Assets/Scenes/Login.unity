@@ -1302,6 +1302,7 @@ MonoBehaviour:
   howToPlay: {fileID: 906162115}
   btnImg: {fileID: 906162115}
   btnText: {fileID: 242083500}
+  pressEnter: {fileID: 1953747100}
   clickPlayer: {fileID: 1215123410}
 --- !u!4 &1683184581
 Transform:

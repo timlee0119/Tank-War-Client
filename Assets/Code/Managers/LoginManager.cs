@@ -19,6 +19,8 @@ namespace Project.Managers {
         [SerializeField]
         private Text btnText;
         [SerializeField]
+        private Text pressEnter;
+        [SerializeField]
         private GameObject clickPlayer;
 
         private SocketIOComponent socketReference;
@@ -51,6 +53,7 @@ namespace Project.Managers {
             howToPlay.enabled = true;
             btnImg.enabled = true;
             btnText.enabled = true;
+            pressEnter.enabled = false;
         }
 
         public void PressClose() {
@@ -58,6 +61,7 @@ namespace Project.Managers {
             howToPlay.enabled = false;
             btnImg.enabled = false;
             btnText.enabled = false;
+            pressEnter.enabled = true;
         }
     }
 
